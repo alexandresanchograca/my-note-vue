@@ -11,11 +11,10 @@
 </template>
 
 <script>
-import { onMounted, ref, watch } from "vue";
+import { ref, watch } from "vue";
 import userAuthState from "@/composables/userAuthState";
 import useDoc from "@/composables/useDoc";
 import { useRouter } from "vue-router";
-import { onUpdated } from "vue";
 import { onBeforeMount } from "vue";
 
 export default {
@@ -39,19 +38,19 @@ export default {
         }
 
         isNoteSaved.value = true;
+      } else {
+        let savedNote = {
+          payload: note.value,
+        };
+
+        await addDocument(user.value.uid, savedNote, props.selectedDate);
+
+        if (error.value) {
+          return;
+        }
+
+        isNoteSaved.value = true;
       }
-
-      let savedNote = {
-        payload: note.value,
-      };
-
-      await addDocument(user.value.uid, savedNote, props.selectedDate);
-
-      if (error.value) {
-        return;
-      }
-
-      isNoteSaved.value = true;
     };
 
     const handleGetDoc = async () => {
@@ -73,7 +72,7 @@ export default {
     };
 
     onBeforeMount(async () => {
-      watch(handleGetDoc);
+      watch(props, handleGetDoc);
 
       watch(note, () => {
         if (!isNewlyLoadedNote.value) {

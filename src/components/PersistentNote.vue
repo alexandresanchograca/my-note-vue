@@ -11,12 +11,13 @@
 </template>
 
 <script>
-import { onMounted, onUpdated, ref, watchEffect } from "vue";
+import { ref } from "vue";
 import userAuthState from "@/composables/userAuthState";
 import useDoc from "@/composables/useDoc";
 import { useRouter } from "vue-router";
-import { Timestamp, serverTimestamp } from "@firebase/firestore";
+import { Timestamp } from "@firebase/firestore";
 import { watch } from "vue";
+import { onBeforeMount } from "vue";
 
 export default {
   setup() {
@@ -53,7 +54,7 @@ export default {
       router.push({ name: "viewer" });
     };
 
-    onMounted(async () => {
+    onBeforeMount(async () => {
       const doc = await getDocument(user.value.uid);
 
       if (doc.exists()) {
