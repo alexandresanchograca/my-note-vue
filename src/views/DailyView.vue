@@ -8,7 +8,7 @@
 <script>
 import DailyNote from "@/components/DailyNote.vue";
 import NoteCalendar from "@/components/NoteCalendar.vue";
-import {ref} from "vue";
+import { ref } from "vue";
 
 export default {
   name: "HomeView",
@@ -16,27 +16,27 @@ export default {
     DailyNote,
     NoteCalendar,
   },
-  setup(){
+  setup() {
     const selectedDate = ref(null);
 
     const handleDate = (eventData) => {
       selectedDate.value = eventData;
-    }
+    };
 
-    return { handleDate, selectedDate}
-  }
+    return { handleDate, selectedDate };
+  },
 };
 </script>
 
 <style>
-.daily-notes{
+.daily-notes {
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
   justify-content: flex-start;
   align-items: stretch;
 }
-form{
+form {
   display: flex;
   flex-grow: 1;
   margin: 5px;
@@ -44,7 +44,7 @@ form{
   justify-content: flex-start;
   align-items: stretch;
 }
-textarea{
+textarea {
   flex-basis: 480px;
 }
 </style>

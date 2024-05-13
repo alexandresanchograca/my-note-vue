@@ -1,12 +1,12 @@
 <template>
-  <button @click="handleView">View in markdown</button>
   <form @submit.prevent="handleSubmit">
     <h4 v-if="!isNoteSaved" class="saved-status">Unsaved note</h4>
-    <label>Daily Note:</label>
+    <label class="note-label">Daily Note:</label>
     <textarea v-model="note"></textarea>
     <div v-if="error">{{ error }}</div>
     <button v-if="!isPending">Save</button>
     <button v-else disabled>Saving...</button>
+    <button @click="handleView">View in markdown</button>
   </form>
 </template>
 
@@ -94,5 +94,14 @@ button:disabled {
 }
 .saved-status {
   color: brown;
+  text-align: center;
+}
+.note-label {
+  border: 0px;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px;
+  border-color: rgb(222, 222, 220);
+  border-style: dashed;
 }
 </style>

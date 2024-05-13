@@ -1,14 +1,5 @@
 import { ref, watchEffect } from "vue";
-import {
-  collection,
-  addDoc,
-  getDoc,
-  setDoc,
-  deleteDoc,
-  doc,
-  updateDoc,
-  onSnapshot,
-} from "firebase/firestore";
+import { getDoc, setDoc, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase/config.js";
 
 const useDoc = (collectionName, subCollectionName) => {
