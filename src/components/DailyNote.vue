@@ -1,6 +1,7 @@
 <template>
   <button @click="handleView">View in markdown</button>
   <form @submit.prevent="handleSubmit">
+    <h4 v-if="!isNoteSaved" class="saved-status">Unsaved note</h4>
     <label>Daily Note:</label>
     <textarea v-model="note"></textarea>
     <div v-if="error">{{ error }}</div>
@@ -14,12 +15,15 @@ import { onMounted, ref, watch } from "vue";
 import userAuthState from "@/composables/userAuthState";
 import useDoc from "@/composables/useDoc";
 import { useRouter } from "vue-router";
+import { onUpdated } from "vue";
+import { onBeforeMount } from "vue";
 
 export default {
   props: ["selectedDate"],
   setup(props, context) {
     const note = ref("");
-
+    const isNoteSaved = ref(true);
+    const isNewlyLoadedNote = ref(true);
     const { user } = userAuthState();
     const { getDocument, addDocument, deleteDocument, error, isPending } =
       useDoc("notes", "daily");
@@ -29,7 +33,12 @@ export default {
     const handleSubmit = async () => {
       if (!note.value) {
         await deleteDocument(user.value.uid, props.selectedDate);
-        return;
+
+        if (error.value) {
+          return;
+        }
+
+        isNoteSaved.value = true;
       }
 
       let savedNote = {
@@ -37,6 +46,12 @@ export default {
       };
 
       await addDocument(user.value.uid, savedNote, props.selectedDate);
+
+      if (error.value) {
+        return;
+      }
+
+      isNoteSaved.value = true;
     };
 
     const handleGetDoc = async () => {
@@ -47,6 +62,9 @@ export default {
       } else {
         note.value = "";
       }
+
+      isNewlyLoadedNote.value = true;
+      isNoteSaved.value = true;
     };
 
     const handleView = async () => {
@@ -54,11 +72,19 @@ export default {
       router.push({ name: "dailyViewer", params: { id: props.selectedDate } });
     };
 
-    onMounted(handleGetDoc);
+    onBeforeMount(async () => {
+      watch(handleGetDoc);
 
-    watch(props, handleGetDoc);
+      watch(note, () => {
+        if (!isNewlyLoadedNote.value) {
+          isNoteSaved.value = false;
+        } else {
+          isNewlyLoadedNote.value = false;
+        }
+      });
+    });
 
-    return { error, note, handleSubmit, handleView, isPending };
+    return { error, note, isNoteSaved, handleSubmit, handleView, isPending };
   },
 };
 </script>
@@ -66,5 +92,8 @@ export default {
 <style scoped>
 button:disabled {
   background-color: rgb(51, 50, 50);
+}
+.saved-status {
+  color: brown;
 }
 </style>

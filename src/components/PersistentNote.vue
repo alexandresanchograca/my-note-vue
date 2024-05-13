@@ -1,6 +1,7 @@
 <template>
   <button @click="handleView">View in markdown</button>
   <form @submit.prevent="handleSubmit">
+    <h4 v-if="!isNoteSaved" class="saved-status">Unsaved note</h4>
     <label>Forever note:</label>
     <textarea v-model="note"></textarea>
     <div v-if="error">{{ error }}</div>
@@ -15,10 +16,12 @@ import userAuthState from "@/composables/userAuthState";
 import useDoc from "@/composables/useDoc";
 import { useRouter } from "vue-router";
 import { Timestamp, serverTimestamp } from "@firebase/firestore";
+import { watch } from "vue";
 
 export default {
   setup() {
     const note = ref("");
+    const isNoteSaved = ref(true);
     const router = useRouter();
     const { user } = userAuthState();
     const {
@@ -37,6 +40,12 @@ export default {
       };
 
       await addDocument(user.value.uid, savedNote);
+
+      if (error.value) {
+        return;
+      }
+
+      isNoteSaved.value = true;
     };
 
     const handleView = async () => {
@@ -50,9 +59,13 @@ export default {
       if (doc.exists()) {
         note.value = doc.data().payload;
       }
+
+      watch(note, () => {
+        isNoteSaved.value = false;
+      });
     });
 
-    return { error, isPending, note, handleSubmit, handleView };
+    return { error, isPending, note, isNoteSaved, handleSubmit, handleView };
   },
 };
 </script>
@@ -68,5 +81,8 @@ textarea {
 }
 button:disabled {
   background-color: rgb(51, 50, 50);
+}
+.saved-status {
+  color: brown;
 }
 </style>

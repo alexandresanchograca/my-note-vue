@@ -1,4 +1,5 @@
 <template>
+  <button @click="handleClick">Back</button>
   <div class="markdown-view">
     <div class="line-numbers language-markup" v-html="formattedContent"></div>
   </div>
@@ -21,6 +22,7 @@ import "prismjs/plugins/show-language/prism-show-language.js"; // display the la
 import { onMounted, ref } from "vue";
 import userAuthState from "@/composables/userAuthState";
 import useDoc from "@/composables/useDoc";
+import { useRouter } from "vue-router";
 
 export default {
   props: ["id"],
@@ -31,6 +33,7 @@ export default {
 
     const { user } = userAuthState();
     const { getDocument, error } = useDoc("notes", "daily");
+    const router = useRouter();
 
     marked.use({
       highlight: (code, lang) => {
@@ -52,7 +55,11 @@ export default {
       }
     });
 
-    return { error, formattedContent };
+    const handleClick = () => {
+      router.go(-1);
+    };
+
+    return { error, formattedContent, handleClick };
   },
 };
 </script>
