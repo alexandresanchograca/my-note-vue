@@ -64,6 +64,6 @@ export default {
 };
 </script>
 
-<style scoped>
-@import "prismjs/themes/prism.css";
+<style>
+@import "prismjs/themes/prism-tomorrow.css";
 </style>

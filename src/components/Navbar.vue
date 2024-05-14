@@ -44,7 +44,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .navbar {
   padding: 16px 10px;
   margin-bottom: 0px;

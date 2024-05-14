@@ -74,6 +74,7 @@ span.token {
   margin-right: 0px;
   padding: 0px;
   font-size: medium;
+  color: var(--background-col);
 }
 
 .vc-dot {
