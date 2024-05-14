@@ -37,6 +37,7 @@ export default {
   flex-wrap: wrap;
 }
 .calendar-col {
+  margin: 5px;
   width: 250px;
 }
 .note-col {
