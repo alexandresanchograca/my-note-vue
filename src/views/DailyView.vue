@@ -1,7 +1,7 @@
 <template>
   <div class="daily-notes">
-    <NoteCalendar @changedDate="handleDate"></NoteCalendar>
-    <DailyNote :selectedDate="selectedDate"></DailyNote>
+    <NoteCalendar class="calendar-col" @changedDate="handleDate"></NoteCalendar>
+    <DailyNote class="note-col" :selectedDate="selectedDate"></DailyNote>
   </div>
 </template>
 
@@ -30,8 +30,16 @@ export default {
 
 <style scoped>
 .daily-notes {
-  display: grid;
-  grid-template-columns: 250px 1fr;
-  grid-row: 1fr;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: stretch;
+  flex-wrap: wrap;
+}
+.calendar-col {
+  width: 250px;
+}
+.note-col {
+  flex-grow: 1;
 }
 </style>
