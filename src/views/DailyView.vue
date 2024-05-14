@@ -31,7 +31,7 @@ export default {
 <style scoped>
 .daily-notes {
   display: grid;
-  grid-template-columns: 1fr 5fr;
+  grid-template-columns: 250px 1fr;
   grid-row: 1fr;
 }
 </style>
