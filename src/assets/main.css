@@ -1,20 +1,24 @@
-/* custom font */
-@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Jersey+25+Charted&family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 
-/* variables */
+/* color variables */
 :root {
-  --primary: #4f515a;
-  --secondary: #ebebeb;
+  color-scheme: light dark;
+  --background-col: light-dark(#fafafa, #2e2e2e);
+  --widget-colors: light-dark(white, #424242);
+  --primary: light-dark(#4f515a, #ffffff);
+  --secondary: light-dark(#ebebeb, #6e6363);
   --warning: #da0f41;
 }
 
 /* base styles  */
 * {
-  font-family: "Nunito", sans-serif;
+  font-family: "Jersey Kanit", sans-serif;
+  font-weight: 400;
+  font-style: normal;
   color: var(--primary);
 }
 body {
-  background: #fafafa;
+  background: var(--background-col);
 }
 a {
   text-decoration: none;
@@ -35,7 +39,7 @@ button,
 button:hover,
 .btn:hover {
   background: var(--primary);
-  color: white;
+  color: var(--widget-colors);
 }
 button:disabled {
   opacity: 0.5;
@@ -51,11 +55,12 @@ form {
   border-radius: 8px;
   box-shadow: 1px 2px 3px rgba(50, 50, 50, 0.05);
   border: 1px solid var(--secondary);
-  background: white;
+  background: var(--widget-colors);
 }
 input,
 textarea {
   border: 0;
+  background-color: var(--widget-colors);
   border-bottom: 1px solid var(--secondary);
   padding: 10px;
   outline: none;
@@ -71,6 +76,11 @@ span.token {
   font-size: medium;
 }
 
+.vc-dot {
+  margin-left: 0px;
+  padding-left: 0px;
+  border-left: 0px;
+}
 /* error text */
 .error {
   color: var(--warning);

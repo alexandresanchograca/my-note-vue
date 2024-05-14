@@ -89,10 +89,20 @@ export default {
 </script>
 
 <style scoped>
+form {
+  display: grid;
+  grid-template-columns: minmax(200px, 1fr);
+  grid-template-rows: 1fr 15fr 1fr 1fr;
+  margin: 5px;
+}
+.note-content > button {
+  margin: 5px;
+}
 button:disabled {
   background-color: rgb(51, 50, 50);
 }
 .saved-status {
+  font-weight: bold;
   color: brown;
   text-align: center;
 }

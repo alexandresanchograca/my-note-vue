@@ -1,13 +1,15 @@
 <template>
-  <button @click="handleView">View in markdown</button>
-  <form @submit.prevent="handleSubmit">
-    <h4 v-if="!isNoteSaved" class="saved-status">Unsaved note</h4>
-    <label class="note-label">Forever note:</label>
-    <textarea v-model="note"></textarea>
-    <div v-if="error">{{ error }}</div>
-    <button v-if="!isPending">Save</button>
-    <button v-else disabled>Saving...</button>
-  </form>
+  <div class="note-content">
+    <button @click="handleView">View in markdown</button>
+    <form @submit.prevent="handleSubmit">
+      <h4 v-if="!isNoteSaved" class="saved-status">Unsaved note</h4>
+      <label class="note-label">Forever note:</label>
+      <textarea v-model="note"></textarea>
+      <div v-if="error">{{ error }}</div>
+      <button v-if="!isPending">Save</button>
+      <button v-else disabled>Saving...</button>
+    </form>
+  </div>
 </template>
 
 <script>
@@ -72,18 +74,25 @@ export default {
 </script>
 
 <style scoped>
-form {
-  display: flex;
-  margin: 5px;
-  flex-direction: column;
+.note-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 15fr;
 }
-textarea {
-  flex-basis: 580px;
+form {
+  display: grid;
+  grid-template-columns: minmax(200px, 1fr);
+  grid-template-rows: 1fr 15fr 1fr;
+  margin: 5px;
+}
+.note-content > button {
+  margin: 5px;
 }
 button:disabled {
   background-color: rgb(51, 50, 50);
 }
 .saved-status {
+  font-weight: bold;
   color: brown;
   text-align: center;
 }

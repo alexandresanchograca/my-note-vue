@@ -1,6 +1,7 @@
 <template>
   <div class="note-calendar">
     <DatePicker
+      transparent
       @click="emitSelectedDate"
       :attributes="attrs"
       v-model="date"
@@ -49,9 +50,7 @@ export default {
 </script>
 
 <style>
-span.vc-dot {
-  margin-left: 0px;
-  padding-left: 0px;
-  border-left: 0px;
+.note-calendar {
+  margin-top: 5px;
 }
 </style>

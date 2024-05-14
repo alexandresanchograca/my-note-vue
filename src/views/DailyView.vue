@@ -28,23 +28,10 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .daily-notes {
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: stretch;
-}
-form {
-  display: flex;
-  flex-grow: 1;
-  margin: 5px;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: stretch;
-}
-textarea {
-  flex-basis: 480px;
+  display: grid;
+  grid-template-columns: 1fr 5fr;
+  grid-row: 1fr;
 }
 </style>

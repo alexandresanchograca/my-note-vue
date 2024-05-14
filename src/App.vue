@@ -16,7 +16,7 @@ export default {
 </script>
 
 <style>
-.content{
+.content {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;

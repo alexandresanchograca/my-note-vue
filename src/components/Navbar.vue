@@ -48,7 +48,7 @@ export default {
 .navbar {
   padding: 16px 10px;
   margin-bottom: 0px;
-  background: white;
+  background: var(--widget-colors);
 }
 
 nav {
