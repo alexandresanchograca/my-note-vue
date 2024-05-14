@@ -6,7 +6,7 @@
         <div v-if="user">
           <router-link :to="{ name: 'home' }">Forever Note</router-link>
           <router-link :to="{ name: 'daily' }">Daily Notes</router-link>
-          <span>Logged in {{ user.email }}</span>
+          <span class="user-status">Logged in {{ user.email }}</span>
           <button @click="handleLogout">Logout</button>
         </div>
         <div v-else>
@@ -47,7 +47,7 @@ export default {
 <style scoped>
 .navbar {
   padding: 16px 10px;
-  margin-bottom: 0px;
+  margin: 5px;
   background: var(--widget-colors);
 }
 
@@ -58,6 +58,7 @@ nav {
 }
 nav h1 {
   margin-left: 20px;
+  white-space: nowrap;
 }
 nav .links {
   margin-left: auto;
@@ -76,5 +77,11 @@ span {
   margin-left: 16px;
   padding-left: 16px;
   border-left: 1px solid #eee;
+}
+
+@media only screen and (max-width: 600px) {
+  .user-status {
+    display: none;
+  }
 }
 </style>
