@@ -77,7 +77,8 @@ export default {
 .note-content {
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: 1fr 15fr;
+  grid-template-rows: 50px 1fr;
+  height: 90vh;
 }
 form {
   display: flex;
@@ -85,6 +86,7 @@ form {
   margin: 5px;
 }
 form > textarea {
+  resize: none;
   flex-basis: 100%;
 }
 .note-content > button {

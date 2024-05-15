@@ -95,7 +95,7 @@ form {
   margin: 5px;
 }
 form > textarea {
-  flex-basis: 100%;
+  flex-basis: 70vh;
 }
 
 .note-content > button {
