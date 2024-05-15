@@ -49,6 +49,7 @@ export default {
   padding: 16px 10px;
   margin: 5px;
   background: var(--widget-colors);
+  border-radius: 8px;
 }
 
 nav {
