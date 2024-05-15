@@ -2,7 +2,7 @@
   <div class="note-content">
     <button @click="handleView">View in markdown</button>
     <form @submit.prevent="handleSubmit">
-      <h4 v-if="!isNoteSaved" class="saved-status">Unsaved note</h4>
+      <h4 v-show="!isNoteSaved" class="saved-status">Unsaved note</h4>
       <label class="note-label">Forever note:</label>
       <textarea v-model="note"></textarea>
       <div v-if="error">{{ error }}</div>
@@ -80,10 +80,12 @@ export default {
   grid-template-rows: 1fr 15fr;
 }
 form {
-  display: grid;
-  grid-template-columns: minmax(200px, 1fr);
-  grid-template-rows: 1fr 15fr 1fr;
+  display: flex;
+  flex-direction: column;
   margin: 5px;
+}
+form > textarea {
+  flex-basis: 100%;
 }
 .note-content > button {
   margin: 5px;

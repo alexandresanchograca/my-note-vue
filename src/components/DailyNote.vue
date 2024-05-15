@@ -90,11 +90,14 @@ export default {
 
 <style scoped>
 form {
-  display: grid;
-  grid-template-columns: minmax(200px, 1fr);
-  grid-template-rows: 1fr 15fr 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   margin: 5px;
 }
+form > textarea {
+  flex-basis: 100%;
+}
+
 .note-content > button {
   margin: 5px;
 }
