@@ -1,7 +1,17 @@
 <template>
-  <div class="daily-notes">
-    <NoteCalendar class="calendar-col" @changedDate="handleDate"></NoteCalendar>
-    <DailyNote class="note-col" :selectedDate="selectedDate"></DailyNote>
+  <div class="daily-content">
+    <button @click="wasViewClicked = true">View in markdown</button>
+    <div class="daily-notes">
+      <NoteCalendar
+        class="calendar-col"
+        @changedDate="handleDate"
+      ></NoteCalendar>
+      <DailyNote
+        class="note-col"
+        :selectedDate="selectedDate"
+        :wasViewClicked="wasViewClicked"
+      ></DailyNote>
+    </div>
   </div>
 </template>
 
@@ -18,17 +28,26 @@ export default {
   },
   setup() {
     const selectedDate = ref(null);
+    const wasViewClicked = ref(false);
 
     const handleDate = (eventData) => {
       selectedDate.value = eventData;
     };
 
-    return { handleDate, selectedDate };
+    return { handleDate, wasViewClicked, selectedDate };
   },
 };
 </script>
 
 <style scoped>
+.daily-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 50px 1fr;
+}
+.daily-content > button {
+  margin: 5px;
+}
 .daily-notes {
   display: flex;
   flex-direction: row;

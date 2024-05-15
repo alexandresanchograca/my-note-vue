@@ -6,7 +6,6 @@
     <div v-if="error">{{ error }}</div>
     <button v-if="!isPending">Save</button>
     <button v-else disabled>Saving...</button>
-    <button @click="handleView">View in markdown</button>
   </form>
 </template>
 
@@ -18,7 +17,7 @@ import { useRouter } from "vue-router";
 import { onBeforeMount } from "vue";
 
 export default {
-  props: ["selectedDate"],
+  props: ["selectedDate", "wasViewClicked"],
   setup(props, context) {
     const note = ref("");
     const isNoteSaved = ref(true);
@@ -71,8 +70,16 @@ export default {
       router.push({ name: "dailyViewer", params: { id: props.selectedDate } });
     };
 
+    const handlePropsChange = () => {
+      if (props.wasViewClicked) {
+        handleView();
+      } else {
+        handleGetDoc();
+      }
+    };
+
     onBeforeMount(async () => {
-      watch(props, handleGetDoc);
+      watch(props, handlePropsChange);
 
       watch(note, () => {
         if (!isNewlyLoadedNote.value) {
