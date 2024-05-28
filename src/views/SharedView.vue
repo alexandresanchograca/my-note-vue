@@ -1,5 +1,6 @@
 <template>
   <div id="shared-notes">
+    <button class="btn" @click="handleCreate">Create note</button>
     <div class="note">
       <ul>
         <li><i class="fa-solid fa-user"></i> teste@maisdasdasdasdasdaad.pt</li>
@@ -10,7 +11,7 @@
       <div class="note-title">
         <h3>My simple note titlessss dasdasdasd asdasdasda</h3>
       </div>
-      <button>View</button>
+      <button class="view-btn" @click="handleClick">View</button>
     </div>
     <div class="note">
       <ul>
@@ -22,19 +23,27 @@
       <div class="note-title">
         <h3>My simple note titlessss dasdasdasd asdasdasda</h3>
       </div>
-      <button>View</button>
+      <button class="view-btn" @click="handleClick">View</button>
     </div>
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+
+const handleClick = () => {
+  router.push({ name: "home" });
+};
+</script>
 
 <style scoped>
 #shared-notes {
   display: flex;
   flex-direction: column;
   margin: 5px;
-  gap: 20px;
+  gap: 10px;
 }
 .note {
   display: flex;
@@ -46,7 +55,7 @@
   gap: 2.8rem;
   height: 140px;
   overflow: hidden;
-  background: var(--secondary);
+  background: #575757;
 }
 
 .note-title {
@@ -77,11 +86,22 @@ li {
   color: #252222;
 }
 
-button {
+.btn {
+  background: var(--secondary);
+  border-radius: 8px;
+  margin: 0;
+  border: 0;
+  padding: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.view-btn {
   margin: 20px;
   width: 160px;
   height: 80%;
-  background-color: #474040;
+  background-color: var(--secondary);
   flex-shrink: 0;
 }
 </style>

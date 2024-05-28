@@ -5,6 +5,7 @@ import SignupView from "@/views/SignupView.vue";
 import { auth } from "@/firebase/config";
 import DailyView from "@/views/DailyView.vue";
 import SharedView from "@/views/SharedView.vue";
+import CreateView from "@/views/SharedView.vue";
 import MarkdownView from "@/views/MarkdownView.vue";
 
 function isAuthed(to, from, next) {
@@ -31,6 +32,11 @@ const routes = [
     path: "/shared",
     name: "shared",
     component: SharedView,
+  },
+  {
+    path: "/create",
+    name: "create",
+    component: CreateView,
   },
   {
     path: "/viewer",
