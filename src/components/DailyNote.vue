@@ -21,11 +21,10 @@ const props = defineProps(["selectedDate", "wasViewClicked"]);
 const note = ref("");
 const isNoteSaved = ref(true);
 const isNewlyLoadedNote = ref(true);
+const isDocChanged = ref(false);
 const { user } = userAuthState();
-const { getDocument, addDocument, deleteDocument, error, isPending } = useDoc(
-  "notes",
-  "daily"
-);
+const { getDocumentRealtime, addDocument, deleteDocument, error, isPending } =
+  useDoc("notes", "daily");
 
 const router = useRouter();
 
@@ -53,14 +52,28 @@ const handleSubmit = async () => {
   }
 };
 
+let unWatchDoc = null;
 const handleGetDoc = async () => {
-  const doc = await getDocument(user.value.uid, props.selectedDate);
+  //const doc = await getDocument(user.value.uid, props.selectedDate);
+  const { document: doc } = getDocumentRealtime(
+    user.value.uid,
+    props.selectedDate
+  );
 
-  if (doc.exists()) {
-    note.value = doc.data().payload;
-  } else {
-    note.value = "";
+  if (unWatchDoc) {
+    //Removing old listener
+    unWatchDoc();
   }
+
+  unWatchDoc = watch(doc, () => {
+    console.log(doc.value);
+    isDocChanged.value = true;
+    if (doc.value) {
+      note.value = doc.value.payload;
+    } else {
+      note.value = "";
+    }
+  });
 
   isNewlyLoadedNote.value = true;
   isNoteSaved.value = true;
@@ -82,11 +95,12 @@ const handlePropsChange = () => {
 onBeforeMount(async () => {
   watch(props, handlePropsChange);
 
-  watch(note, () => {
-    if (!isNewlyLoadedNote.value) {
+  const wat = watch(note, () => {
+    if (!isNewlyLoadedNote.value && !isDocChanged.value) {
       isNoteSaved.value = false;
     } else {
       isNewlyLoadedNote.value = false;
+      isDocChanged.value = false;
     }
   });
 });

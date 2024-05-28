@@ -28,7 +28,6 @@ const useDoc = (collectionName, subCollectionName) => {
     const docRef = doc(db, collectionPath, documentName);
 
     const unsub = onSnapshot(docRef, (doc) => {
-      console.log("Current data: ", doc.data());
       document.value = doc.data();
     });
 
