@@ -23,10 +23,12 @@ import { onBeforeMount } from "vue";
 
 const note = ref("");
 const isNoteSaved = ref(true);
+const isDocChanged = ref(false);
 const router = useRouter();
 const { user } = userAuthState();
 const {
   getDocument,
+  getDocumentRealtime,
   addDocument,
   deleteDocument,
   updateDocument,
@@ -54,15 +56,20 @@ const handleView = async () => {
   router.push({ name: "viewer" });
 };
 
-onBeforeMount(async () => {
-  const doc = await getDocument(user.value.uid);
+onBeforeMount(() => {
+  const { document: doc } = getDocumentRealtime(user.value.uid);
 
-  if (doc.exists()) {
-    note.value = doc.data().payload;
-  }
+  watch(doc, () => {
+    isDocChanged.value = true;
+    note.value = doc.value.payload;
+  });
 
   watch(note, () => {
-    isNoteSaved.value = false;
+    if (!isDocChanged.value) {
+      isNoteSaved.value = false;
+    } else {
+      isDocChanged.value = false;
+    }
   });
 });
 </script>

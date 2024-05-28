@@ -1,10 +1,43 @@
-import { ref } from "vue";
-import { getDoc, setDoc, deleteDoc, doc, updateDoc } from "firebase/firestore";
+import { ref, watchEffect } from "vue";
+import {
+  getDoc,
+  setDoc,
+  deleteDoc,
+  doc,
+  updateDoc,
+  onSnapshot,
+} from "firebase/firestore";
 import { db } from "@/firebase/config.js";
 
 const useDoc = (collectionName, subCollectionName) => {
   const error = ref("");
   const isPending = ref(false);
+
+  const getDocumentRealtime = (documentId, timestamp) => {
+    error.value = "";
+    const document = ref(null);
+
+    //TODO organize this better, (function overloading?)
+    let collectionPath = collectionName;
+    let documentName = documentId;
+    if (subCollectionName && timestamp) {
+      collectionPath = `${collectionName}/${documentId}/${subCollectionName}`;
+      documentName = timestamp;
+    }
+
+    const docRef = doc(db, collectionPath, documentName);
+
+    const unsub = onSnapshot(docRef, (doc) => {
+      console.log("Current data: ", doc.data());
+      document.value = doc.data();
+    });
+
+    watchEffect((onInvalidate) => {
+      onInvalidate(() => unsub());
+    });
+
+    return { document };
+  };
 
   const getDocument = async (documentId, timestamp) => {
     error.value = "";
@@ -86,6 +119,7 @@ const useDoc = (collectionName, subCollectionName) => {
 
   return {
     getDocument,
+    getDocumentRealtime,
     addDocument,
     deleteDocument,
     updateDocument,
