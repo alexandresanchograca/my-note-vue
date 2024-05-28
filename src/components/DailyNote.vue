@@ -65,7 +65,6 @@ const handleGetDoc = () => {
   }
 
   unWatchDoc = watch(doc, () => {
-    console.log(doc.value);
     isDocChanged.value = true;
     if (doc.value) {
       note.value = doc.value.payload;
