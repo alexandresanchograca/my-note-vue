@@ -53,8 +53,7 @@ const handleSubmit = async () => {
 };
 
 let unWatchDoc = null;
-const handleGetDoc = async () => {
-  //const doc = await getDocument(user.value.uid, props.selectedDate);
+const handleGetDoc = () => {
   const { document: doc } = getDocumentRealtime(
     user.value.uid,
     props.selectedDate
@@ -92,7 +91,7 @@ const handlePropsChange = () => {
   }
 };
 
-onBeforeMount(async () => {
+onBeforeMount(() => {
   watch(props, handlePropsChange);
 
   const wat = watch(note, () => {
