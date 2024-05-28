@@ -33,6 +33,10 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 
+const handleCreate = () => {
+  router.push({ name: "create" });
+};
+
 const handleClick = () => {
   router.push({ name: "home" });
 };
