@@ -15,27 +15,16 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import DailyNote from "@/components/DailyNote.vue";
 import NoteCalendar from "@/components/NoteCalendar.vue";
 import { ref } from "vue";
 
-export default {
-  name: "HomeView",
-  components: {
-    DailyNote,
-    NoteCalendar,
-  },
-  setup() {
-    const selectedDate = ref(null);
-    const wasViewClicked = ref(false);
+const selectedDate = ref(null);
+const wasViewClicked = ref(false);
 
-    const handleDate = (eventData) => {
-      selectedDate.value = eventData;
-    };
-
-    return { handleDate, wasViewClicked, selectedDate };
-  },
+const handleDate = (eventData) => {
+  selectedDate.value = eventData;
 };
 </script>
 

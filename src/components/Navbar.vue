@@ -18,29 +18,23 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import userAuth from "@/composables/userAuth";
 import { useRouter } from "vue-router";
 import userAuthState from "@/composables/userAuthState";
 
-export default {
-  setup() {
-    const { error, logout } = userAuth();
-    const router = useRouter();
-    const { user } = userAuthState();
+const { error, logout } = userAuth();
+const router = useRouter();
+const { user } = userAuthState();
 
-    const handleLogout = async () => {
-      const res = await logout();
+const handleLogout = async () => {
+  const res = await logout();
 
-      if (error.value) {
-        return;
-      }
+  if (error.value) {
+    return;
+  }
 
-      router.push({ name: "login" });
-    };
-
-    return { user, handleLogout };
-  },
+  router.push({ name: "login" });
 };
 </script>
 

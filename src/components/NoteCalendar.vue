@@ -10,43 +10,35 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { DatePicker } from "v-calendar";
 import { onMounted, ref } from "vue";
 import useCollection from "@/composables/useCollection";
 import userAuthState from "@/composables/userAuthState";
 
-export default {
-  components: {
-    DatePicker,
-  },
-  setup(props, context) {
-    const date = ref(new Date());
-    const attrs = ref(null);
-    const selectedDate = ref(date.value.toISOString().substring(0, 10));
-    const { user } = userAuthState();
+const date = ref(new Date());
+const attrs = ref(null);
+const selectedDate = ref(date.value.toISOString().substring(0, 10));
+const { user } = userAuthState();
+const emit = defineEmits(["changedDate"]);
 
-    const { getDocumentIds } = useCollection();
+const { getDocumentIds } = useCollection();
 
-    const emitSelectedDate = () => {
-      selectedDate.value = date.value.toISOString().substring(0, 10);
-      context.emit("changedDate", selectedDate.value);
+const emitSelectedDate = () => {
+  selectedDate.value = date.value.toISOString().substring(0, 10);
+  emit("changedDate", selectedDate.value);
 
-      getDocumentIds(`notes/${user.value.uid}/daily`).then((docs) => {
-        attrs.value = [
-          {
-            dot: true,
-            dates: docs.iDs,
-          },
-        ];
-      });
-    };
-
-    onMounted(emitSelectedDate);
-
-    return { date, selectedDate, emitSelectedDate, attrs };
-  },
+  getDocumentIds(`notes/${user.value.uid}/daily`).then((docs) => {
+    attrs.value = [
+      {
+        dot: true,
+        dates: docs.iDs,
+      },
+    ];
+  });
 };
+
+onMounted(emitSelectedDate);
 </script>
 
 <style>

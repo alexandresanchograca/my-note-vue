@@ -6,7 +6,7 @@
 </template>
 
 //@Credits https://github.com/michaeldhead/vue32-markdown
-<script>
+<script setup>
 import { marked } from "marked";
 import prism from "prismjs";
 
@@ -24,43 +24,36 @@ import userAuthState from "@/composables/userAuthState";
 import useDoc from "@/composables/useDoc";
 import { useRouter } from "vue-router";
 
-export default {
-  props: ["id"],
-  components: {},
-  setup(props) {
-    const note = ref("");
-    const formattedContent = ref("");
+const props = defineProps(["id"]);
+const note = ref("");
+const formattedContent = ref("");
 
-    const { user } = userAuthState();
-    const { getDocument, error } = useDoc("notes", "daily");
-    const router = useRouter();
+const { user } = userAuthState();
+const { getDocument, error } = useDoc("notes", "daily");
+const router = useRouter();
 
-    marked.use({
-      highlight: (code, lang) => {
-        if (prism.languages[lang]) {
-          return prism.highlight(code, prism.languages[lang], lang);
-        } else {
-          return code;
-        }
-      },
-    });
-
-    onMounted(async () => {
-      const doc = await getDocument(user.value.uid, props.id);
-
-      if (doc.exists()) {
-        note.value = doc.data().payload;
-        formattedContent.value = marked.parse(note.value);
-        prism.highlightAll();
-      }
-    });
-
-    const handleClick = () => {
-      router.go(-1);
-    };
-
-    return { error, formattedContent, handleClick };
+marked.use({
+  highlight: (code, lang) => {
+    if (prism.languages[lang]) {
+      return prism.highlight(code, prism.languages[lang], lang);
+    } else {
+      return code;
+    }
   },
+});
+
+onMounted(async () => {
+  const doc = await getDocument(user.value.uid, props.id);
+
+  if (doc.exists()) {
+    note.value = doc.data().payload;
+    formattedContent.value = marked.parse(note.value);
+    prism.highlightAll();
+  }
+});
+
+const handleClick = () => {
+  router.go(-1);
 };
 </script>
 

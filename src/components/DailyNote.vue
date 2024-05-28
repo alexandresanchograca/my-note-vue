@@ -9,90 +9,87 @@
   </form>
 </template>
 
-<script>
+<script setup>
 import { ref, watch } from "vue";
 import userAuthState from "@/composables/userAuthState";
 import useDoc from "@/composables/useDoc";
 import { useRouter } from "vue-router";
 import { onBeforeMount } from "vue";
 
-export default {
-  props: ["selectedDate", "wasViewClicked"],
-  setup(props, context) {
-    const note = ref("");
-    const isNoteSaved = ref(true);
-    const isNewlyLoadedNote = ref(true);
-    const { user } = userAuthState();
-    const { getDocument, addDocument, deleteDocument, error, isPending } =
-      useDoc("notes", "daily");
+const props = defineProps(["selectedDate", "wasViewClicked"]);
 
-    const router = useRouter();
+const note = ref("");
+const isNoteSaved = ref(true);
+const isNewlyLoadedNote = ref(true);
+const { user } = userAuthState();
+const { getDocument, addDocument, deleteDocument, error, isPending } = useDoc(
+  "notes",
+  "daily"
+);
 
-    const handleSubmit = async () => {
-      if (!note.value) {
-        await deleteDocument(user.value.uid, props.selectedDate);
+const router = useRouter();
 
-        if (error.value) {
-          return;
-        }
+const handleSubmit = async () => {
+  if (!note.value) {
+    await deleteDocument(user.value.uid, props.selectedDate);
 
-        isNoteSaved.value = true;
-      } else {
-        let savedNote = {
-          payload: note.value,
-        };
+    if (error.value) {
+      return;
+    }
 
-        await addDocument(user.value.uid, savedNote, props.selectedDate);
-
-        if (error.value) {
-          return;
-        }
-
-        isNoteSaved.value = true;
-      }
+    isNoteSaved.value = true;
+  } else {
+    let savedNote = {
+      payload: note.value,
     };
 
-    const handleGetDoc = async () => {
-      const doc = await getDocument(user.value.uid, props.selectedDate);
+    await addDocument(user.value.uid, savedNote, props.selectedDate);
 
-      if (doc.exists()) {
-        note.value = doc.data().payload;
-      } else {
-        note.value = "";
-      }
+    if (error.value) {
+      return;
+    }
 
-      isNewlyLoadedNote.value = true;
-      isNoteSaved.value = true;
-    };
-
-    const handleView = async () => {
-      await handleSubmit();
-      router.push({ name: "dailyViewer", params: { id: props.selectedDate } });
-    };
-
-    const handlePropsChange = () => {
-      if (props.wasViewClicked) {
-        handleView();
-      } else {
-        handleGetDoc();
-      }
-    };
-
-    onBeforeMount(async () => {
-      watch(props, handlePropsChange);
-
-      watch(note, () => {
-        if (!isNewlyLoadedNote.value) {
-          isNoteSaved.value = false;
-        } else {
-          isNewlyLoadedNote.value = false;
-        }
-      });
-    });
-
-    return { error, note, isNoteSaved, handleSubmit, handleView, isPending };
-  },
+    isNoteSaved.value = true;
+  }
 };
+
+const handleGetDoc = async () => {
+  const doc = await getDocument(user.value.uid, props.selectedDate);
+
+  if (doc.exists()) {
+    note.value = doc.data().payload;
+  } else {
+    note.value = "";
+  }
+
+  isNewlyLoadedNote.value = true;
+  isNoteSaved.value = true;
+};
+
+const handleView = async () => {
+  await handleSubmit();
+  router.push({ name: "dailyViewer", params: { id: props.selectedDate } });
+};
+
+const handlePropsChange = () => {
+  if (props.wasViewClicked) {
+    handleView();
+  } else {
+    handleGetDoc();
+  }
+};
+
+onBeforeMount(async () => {
+  watch(props, handlePropsChange);
+
+  watch(note, () => {
+    if (!isNewlyLoadedNote.value) {
+      isNoteSaved.value = false;
+    } else {
+      isNewlyLoadedNote.value = false;
+    }
+  });
+});
 </script>
 
 <style scoped>

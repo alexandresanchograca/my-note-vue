@@ -2,16 +2,8 @@
   <PersistentNote></PersistentNote>
 </template>
 
-<script>
+<script setup>
 import PersistentNote from "@/components/PersistentNote.vue";
-
-export default {
-  name: "HomeView",
-  components: {
-    PersistentNote,
-  }
-};
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

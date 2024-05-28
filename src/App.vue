@@ -5,14 +5,8 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import Navbar from "@/components/Navbar.vue";
-export default {
-  components: {
-    Navbar,
-  },
-  setup() {},
-};
 </script>
 
 <style>
