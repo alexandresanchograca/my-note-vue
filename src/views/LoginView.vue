@@ -44,6 +44,9 @@ const handleSubmit = async () => {
 </script>
 
 <style scoped>
+.welcome {
+  margin: 0 5px;
+}
 button {
   margin: 20px auto;
 }

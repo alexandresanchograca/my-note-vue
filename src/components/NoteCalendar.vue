@@ -12,7 +12,7 @@
 
 <script setup>
 import { DatePicker } from "v-calendar";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch, watchEffect } from "vue";
 import useCollection from "@/composables/useCollection";
 import userAuthState from "@/composables/userAuthState";
 
@@ -22,21 +22,23 @@ const selectedDate = ref(date.value.toISOString().substring(0, 10));
 const { user } = userAuthState();
 const emit = defineEmits(["changedDate"]);
 
-const { getDocumentIds } = useCollection();
+const { getDocumentIdsRealtime } = useCollection();
 
 const emitSelectedDate = () => {
   selectedDate.value = date.value.toISOString().substring(0, 10);
   emit("changedDate", selectedDate.value);
-
-  getDocumentIds(`notes/${user.value.uid}/daily`).then((docs) => {
-    attrs.value = [
-      {
-        dot: true,
-        dates: docs.iDs,
-      },
-    ];
-  });
 };
+
+const { documentIds } = getDocumentIdsRealtime(`notes/${user.value.uid}/daily`);
+
+watch(documentIds, () => {
+  attrs.value = [
+    {
+      dot: true,
+      dates: documentIds.value,
+    },
+  ];
+});
 
 onMounted(emitSelectedDate);
 </script>

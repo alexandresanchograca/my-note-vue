@@ -1,4 +1,4 @@
-import { ref, watchEffect } from "vue";
+import { ref } from "vue";
 import { getDoc, setDoc, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase/config.js";
 
