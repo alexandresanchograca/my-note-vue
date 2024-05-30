@@ -1,8 +1,10 @@
 import {
   collection,
   query,
+  or,
   getDocs,
   getDoc,
+  where,
   onSnapshot,
 } from "firebase/firestore";
 import { db } from "@/firebase/config.js";
@@ -50,12 +52,17 @@ const useCollection = () => {
     return { documentIds, error };
   };
 
-  const getDocuments = (collectionName) => {
+  const getDocuments = (collectionName, firstQueryParam, secQueryParam) => {
     const error = ref(null);
     const documents = ref([]);
 
     const colRef = collection(db, collectionName);
-    const q = query(colRef);
+
+    let q = query(colRef);
+
+    if (firstQueryParam && secQueryParam) {
+      q = query(colRef, or(where(...firstQueryParam), where(...secQueryParam)));
+    }
 
     const unsub = onSnapshot(
       q,

@@ -22,14 +22,20 @@
 import { watch, onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
 import useCollection from "@/composables/useCollection";
+import userAuthState from "@/composables/userAuthState";
 
 const router = useRouter();
 const { getDocuments } = useCollection();
+const { user } = userAuthState();
 
-const { documents: notes, error } = getDocuments("shared-notes");
+const { documents: notes, error } = getDocuments(
+  "shared-notes",
+  ["users", "array-contains", user.value.email],
+  ["owner", "==", user.value.email]
+);
 
 watch(notes, () => {
-  console.log(notes.value[0]);
+  console.log(notes.value);
 });
 
 const handleCreate = () => {

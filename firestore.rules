@@ -5,9 +5,9 @@ service cloud.firestore {
     match /notes/{userId}/{document=**} {
       allow read, create, delete, update: if request.auth.uid == userId;
     }
-    match /shared-notes/{document=**} {
-      allow read: if resource.data.users;
-      allow read, create, delete, update;
+    match /shared-notes/{documentId} {
+      allow read, update: if request.auth != null && request.auth.token.email in resource.data.users;
+      allow read, update, create, delete: if request.auth.token.email == resource.data.owner;
     }
   }
 }
