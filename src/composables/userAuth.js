@@ -3,7 +3,7 @@ import { ref } from "vue";
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-    signOut,
+  signOut,
 } from "firebase/auth";
 
 const error = ref(null);
@@ -22,7 +22,7 @@ const login = async (email, password) => {
 
     return res;
   } catch (err) {
-    error.value = err.message;
+    error.value = "Username or password are incorrect, please try again...";
   } finally {
     isPending.value = false;
   }
@@ -49,12 +49,12 @@ const signup = async (email, password) => {
 
 const logout = async () => {
   error.value = null;
-  try{
+  try {
     return await signOut(auth);
-  }catch(err){
+  } catch (err) {
     error.value = err.message;
   }
-}
+};
 
 const userAuth = () => {
   return { error, isPending, login, logout, signup };

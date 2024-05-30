@@ -1,37 +1,36 @@
 <template>
-  <div id="shared-notes">
+  <div v-if="notes" id="shared-notes">
     <button class="btn" @click="handleCreate">Create note</button>
-    <div class="note">
-      <ul>
-        <li><i class="fa-solid fa-user"></i> teste@maisdasdasdasdasdaad.pt</li>
-        <li><i class="fa-solid fa-user"></i> teste@mail.pt</li>
-        <li><i class="fa-solid fa-user"></i> teste@mail.pt</li>
-        <li><i class="fa-solid fa-user"></i> ...</li>
+    <div v-for="note in notes" :key="note.title" class="note">
+      <ul v-if="note.users">
+        <li v-for="user in note.users" :key="user">
+          <i class="fa-solid fa-user"></i> {{ user }}
+        </li>
+        <li v-if="note.users.length > 3">
+          <i class="fa-solid fa-user"></i> ...
+        </li>
       </ul>
       <div class="note-title">
-        <h3>My simple note titlessss dasdasdasd asdasdasda</h3>
+        <h3>{{ note.title }}</h3>
       </div>
-      <button class="view-btn" @click="handleClick">View</button>
-    </div>
-    <div class="note">
-      <ul>
-        <li><i class="fa-solid fa-user"></i> teste@maisdasdasdasdasdaad.pt</li>
-        <li><i class="fa-solid fa-user"></i> teste@mail.pt</li>
-        <li><i class="fa-solid fa-user"></i> teste@mail.pt</li>
-        <li><i class="fa-solid fa-user"></i> ...</li>
-      </ul>
-      <div class="note-title">
-        <h3>My simple note titlessss dasdasdasd asdasdasda</h3>
-      </div>
-      <button class="view-btn" @click="handleClick">View</button>
+      <button class="view-btn" @click="handleClick(note)">View</button>
     </div>
   </div>
 </template>
 
 <script setup>
+import { watch, onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
+import useCollection from "@/composables/useCollection";
 
 const router = useRouter();
+const { getDocuments } = useCollection();
+
+const { documents: notes, error } = getDocuments("shared-notes");
+
+watch(notes, () => {
+  console.log(notes.value[0]);
+});
 
 const handleCreate = () => {
   router.push({ name: "create" });

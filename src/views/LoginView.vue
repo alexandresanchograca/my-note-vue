@@ -13,6 +13,7 @@
         Not a user yet?
         <router-link class="welcome-alt" to="signup">Signup now!</router-link>
       </p>
+      <p class="error" v-if="error">{{ error }}</p>
       <button v-if="!isPending">Login</button>
       <button v-else disabled>Logging in...</button>
     </form>

@@ -16,7 +16,67 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { ref } from "vue";
+import userAuthState from "@/composables/userAuthState";
+import useDoc from "@/composables/useDoc";
+import { useRouter } from "vue-router";
+import { Timestamp } from "@firebase/firestore";
+import { watch } from "vue";
+import { onBeforeMount } from "vue";
+
+const note = ref("");
+const isNoteSaved = ref(true);
+const isDocChanged = ref(false);
+const router = useRouter();
+const { user } = userAuthState();
+const {
+  getDocument,
+  getDocumentRealtime,
+  addDocument,
+  deleteDocument,
+  updateDocument,
+  error,
+  isPending,
+} = useDoc("notes");
+
+const handleSubmit = async () => {
+  let savedNote = {
+    payload: note.value,
+    modifiedAt: Timestamp.fromDate(new Date()),
+  };
+
+  await addDocument(user.value.uid, savedNote);
+
+  if (error.value) {
+    return;
+  }
+
+  isNoteSaved.value = true;
+};
+
+const handleView = async () => {
+  await handleSubmit();
+  router.push({ name: "viewer" });
+};
+
+onBeforeMount(() => {
+  const { document: doc } = getDocumentRealtime(user.value.uid);
+
+  watch(doc, () => {
+    isDocChanged.value = true;
+    note.value = doc.value.payload;
+  });
+
+  watch(note, () => {
+    if (!isDocChanged.value) {
+      isNoteSaved.value = false;
+    } else {
+      isDocChanged.value = false;
+    }
+  });
+});
+</script>
 
 <style scoped>
 .note-content {

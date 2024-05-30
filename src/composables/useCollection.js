@@ -50,7 +50,34 @@ const useCollection = () => {
     return { documentIds, error };
   };
 
-  return { getDocumentIds, getDocumentIdsRealtime };
+  const getDocuments = (collectionName) => {
+    const error = ref(null);
+    const documents = ref([]);
+
+    const colRef = collection(db, collectionName);
+    const q = query(colRef);
+
+    const unsub = onSnapshot(
+      q,
+      (querySnapshot) => {
+        documents.value = querySnapshot.docs.map((doc) => {
+          return { ...doc.data(), id: doc.id };
+        });
+      },
+      (err) => {
+        console.log(err.message);
+        error.value = err.message;
+      }
+    );
+
+    watchEffect((onInvalidate) => {
+      onInvalidate(() => unsub());
+    });
+
+    return { documents, error };
+  };
+
+  return { getDocumentIds, getDocumentIdsRealtime, getDocuments };
 };
 
 export default useCollection;
