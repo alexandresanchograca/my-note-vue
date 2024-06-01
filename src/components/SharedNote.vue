@@ -3,8 +3,12 @@
     <button @click="handleView">View in markdown</button>
     <form @submit.prevent="handleSubmit">
       <h4 v-show="!isNoteSaved" class="saved-status">Unsaved note</h4>
-      <label class="note-label">Forever note:</label>
-      <textarea v-model="note"></textarea>
+      <div class="title-container">
+        <label class="title-label">Title:</label>
+        <input class="title-label" v-model="note.title" required />
+      </div>
+      <label class="note-label">Payload:</label>
+      <textarea v-model="note.payload"></textarea>
       <div v-if="error">{{ error }}</div>
       <button v-if="!isPending">Save</button>
       <button v-else disabled>Saving...</button>
@@ -21,28 +25,31 @@ import { Timestamp } from "@firebase/firestore";
 import { watch } from "vue";
 import { onBeforeMount } from "vue";
 
+const props = defineProps(["noteId"]);
+
 const note = ref("");
 const isNoteSaved = ref(true);
 const isDocChanged = ref(false);
 const router = useRouter();
 const { user } = userAuthState();
 const {
-  getDocument,
   getDocumentRealtime,
   addDocument,
   deleteDocument,
   updateDocument,
   error,
   isPending,
-} = useDoc("notes");
+} = useDoc("shared-notes");
 
 const handleSubmit = async () => {
   let savedNote = {
-    payload: note.value,
+    ...note.value,
     modifiedAt: Timestamp.fromDate(new Date()),
   };
 
-  await addDocument(user.value.uid, savedNote);
+  console.log(note.value);
+
+  await addDocument(props.noteId, savedNote);
 
   if (error.value) {
     return;
@@ -53,15 +60,15 @@ const handleSubmit = async () => {
 
 const handleView = async () => {
   await handleSubmit();
-  router.push({ name: "viewer" });
+  router.push({ name: "dailyViewer", params: { id: props.selectedDate } });
 };
 
 onBeforeMount(() => {
-  const { document: doc } = getDocumentRealtime(user.value.uid);
+  const { document: doc } = getDocumentRealtime(props.noteId);
 
   watch(doc, () => {
     isDocChanged.value = true;
-    note.value = doc.value.payload;
+    note.value = doc.value;
   });
 
   watch(note, () => {

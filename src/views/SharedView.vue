@@ -13,7 +13,7 @@
       <div class="note-title">
         <h3>{{ note.title }}</h3>
       </div>
-      <button class="view-btn" @click="handleClick(note)">View</button>
+      <button class="view-btn" @click="handleView(note)">View</button>
     </div>
   </div>
 </template>
@@ -42,8 +42,8 @@ const handleCreate = () => {
   router.push({ name: "create" });
 };
 
-const handleClick = () => {
-  router.push({ name: "home" });
+const handleView = (note) => {
+  router.push({ name: "note", params: { id: note.id } });
 };
 </script>
 
