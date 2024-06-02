@@ -20,16 +20,10 @@ import "prismjs/plugins/copy-to-clipboard/prism-copy-to-clipboard.js"; // show c
 import "prismjs/plugins/show-language/prism-show-language.js"; // display the language of the code block
 
 import { onMounted, ref } from "vue";
-import userAuthState from "@/composables/userAuthState";
-import useDoc from "@/composables/useDoc";
 import { useRouter } from "vue-router";
 
-const props = defineProps(["id"]);
 const note = ref("");
 const formattedContent = ref("");
-
-const { user } = userAuthState();
-const { getDocument, error } = useDoc("notes", "daily");
 const router = useRouter();
 
 marked.use({
@@ -42,11 +36,9 @@ marked.use({
   },
 });
 
-onMounted(async () => {
-  const doc = await getDocument(user.value.uid, props.id);
-
-  if (doc.exists()) {
-    note.value = doc.data().payload;
+onMounted(() => {
+  if (history.state.payload) {
+    note.value = history.state.payload;
     formattedContent.value = marked.parse(note.value);
     prism.highlightAll();
   }

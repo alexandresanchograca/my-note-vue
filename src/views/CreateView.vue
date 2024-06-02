@@ -22,7 +22,6 @@ import userAuthState from "@/composables/userAuthState";
 import useDoc from "@/composables/useDoc";
 import { useRouter } from "vue-router";
 import { Timestamp } from "@firebase/firestore";
-import { watch } from "vue";
 import { onBeforeMount } from "vue";
 
 const router = useRouter();
@@ -37,18 +36,17 @@ const note = ref({
 
 const sharedUsers = ref([]);
 
-const {
-  getDocument,
-  getDocumentRealtime,
-  addDocument,
-  deleteDocument,
-  updateDocument,
-  error,
-  isPending,
-} = useDoc("shared-notes");
+const { addDocument, error, isPending } = useDoc("shared-notes");
 
 const handleSubmit = async () => {
-  console.log(sharedUsers.value);
+  note.value.users = sharedUsers.value
+    .filter((usr) => usr.length)
+    .reduce((acc, curr) => {
+      if (!acc.includes(curr)) {
+        acc.push(curr);
+      }
+      return acc;
+    }, []);
 
   let savedNote = {
     ...note.value,
@@ -67,10 +65,8 @@ const handleSubmit = async () => {
 
 <style scoped>
 .note-content {
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 1fr;
-  height: 90svh;
+  display: flex;
+  flex-direction: column;
 }
 form {
   display: flex;
@@ -79,7 +75,7 @@ form {
 }
 form > textarea {
   resize: none;
-  flex-basis: 100%;
+  flex-basis: 60svh;
 }
 .note-content > button {
   margin: 5px;

@@ -79,7 +79,7 @@ const handleGetDoc = () => {
 
 const handleView = async () => {
   await handleSubmit();
-  router.push({ name: "dailyViewer", params: { id: props.selectedDate } });
+  router.push({ name: "viewer", state: { payload: note.value } });
 };
 
 const handlePropsChange = () => {

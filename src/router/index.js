@@ -45,12 +45,6 @@ const routes = [
     component: MarkdownView,
   },
   {
-    path: "/viewer/:id",
-    name: "dailyViewer",
-    component: MarkdownView,
-    props: true,
-  },
-  {
     path: "/note/:id",
     name: "note",
     component: NoteView,

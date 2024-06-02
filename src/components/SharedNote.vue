@@ -1,6 +1,7 @@
 <template>
   <div class="note-content">
     <button @click="handleView">View in markdown</button>
+    <AddUsers v-if="note" v-model="note.users"></AddUsers>
     <form @submit.prevent="handleSubmit">
       <h4 v-show="!isNoteSaved" class="saved-status">Unsaved note</h4>
       <div class="title-container">
@@ -24,6 +25,7 @@ import { useRouter } from "vue-router";
 import { Timestamp } from "@firebase/firestore";
 import { watch } from "vue";
 import { onBeforeMount } from "vue";
+import AddUsers from "./AddUsers.vue";
 
 const props = defineProps(["noteId"]);
 
@@ -32,22 +34,23 @@ const isNoteSaved = ref(true);
 const isDocChanged = ref(false);
 const router = useRouter();
 const { user } = userAuthState();
-const {
-  getDocumentRealtime,
-  setDocument,
-  deleteDocument,
-  updateDocument,
-  error,
-  isPending,
-} = useDoc("shared-notes");
+const { getDocumentRealtime, setDocument, deleteDocument, error, isPending } =
+  useDoc("shared-notes");
 
 const handleSubmit = async () => {
+  note.value.users = note.value.users
+    .filter((usr) => usr.length)
+    .reduce((acc, curr) => {
+      if (!acc.includes(curr)) {
+        acc.push(curr);
+      }
+      return acc;
+    }, []);
+
   let savedNote = {
     ...note.value,
     modifiedAt: Timestamp.fromDate(new Date()),
   };
-
-  console.log(note.value);
 
   await setDocument(props.noteId, savedNote);
 
@@ -60,7 +63,7 @@ const handleSubmit = async () => {
 
 const handleView = async () => {
   await handleSubmit();
-  router.push({ name: "dailyViewer", params: { id: props.selectedDate } });
+  router.push({ name: "viewer", state: { payload: note.value.payload } });
 };
 
 onBeforeMount(() => {
@@ -83,10 +86,8 @@ onBeforeMount(() => {
 
 <style scoped>
 .note-content {
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 50px 1fr;
-  height: 90svh;
+  display: flex;
+  flex-direction: column;
 }
 form {
   display: flex;
@@ -95,7 +96,7 @@ form {
 }
 form > textarea {
   resize: none;
-  flex-basis: 100%;
+  flex-basis: 45svh;
 }
 .note-content > button {
   margin: 5px;

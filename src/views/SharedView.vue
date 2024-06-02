@@ -2,6 +2,13 @@
   <div v-if="notes" id="shared-notes">
     <button class="btn" @click="handleCreate">Create note</button>
     <div v-for="note in notes" :key="note.title" class="note">
+      <button
+        v-if="isOwner(note)"
+        class="delete item-btn"
+        @click="handleDelete(note)"
+      >
+        <i class="fa-solid fa-trash"></i>
+      </button>
       <ul v-if="note.users">
         <li v-for="user in note.users" :key="user">
           <i class="fa-solid fa-user"></i> {{ user }}
@@ -13,19 +20,21 @@
       <div class="note-title">
         <h3>{{ note.title }}</h3>
       </div>
-      <button class="view-btn" @click="handleView(note)">View</button>
+
+      <button class="view item-btn" @click="handleView(note)">View</button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { watch, onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
 import useCollection from "@/composables/useCollection";
 import userAuthState from "@/composables/userAuthState";
+import useDoc from "@/composables/useDoc";
 
 const router = useRouter();
 const { getDocuments } = useCollection();
+const { deleteDocument } = useDoc("shared-notes");
 const { user } = userAuthState();
 
 const { documents: notes, error } = getDocuments(
@@ -34,12 +43,16 @@ const { documents: notes, error } = getDocuments(
   ["owner", "==", user.value.email]
 );
 
-watch(notes, () => {
-  console.log(notes.value);
-});
+const isOwner = (note) => {
+  return note.owner === user.value.email;
+};
 
 const handleCreate = () => {
   router.push({ name: "create" });
+};
+
+const handleDelete = async (note) => {
+  await deleteDocument(note.id);
 };
 
 const handleView = (note) => {
@@ -106,11 +119,19 @@ li {
   display: inline-block;
 }
 
-.view-btn {
+.item-btn {
+  height: 80%;
+  flex-shrink: 0;
+}
+
+.view {
   margin: 20px;
   width: 160px;
-  height: 80%;
   background-color: var(--secondary);
-  flex-shrink: 0;
+}
+
+.delete {
+  margin: 20px 0px;
+  background-color: rgba(150, 37, 0, 0.5);
 }
 </style>
