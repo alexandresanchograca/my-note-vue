@@ -1,16 +1,15 @@
 <template>
   <div class="note-content">
-    <button @click="handleView">View in markdown</button>
+    <AddUsers v-model="sharedUsers"></AddUsers>
     <form @submit.prevent="handleSubmit">
-      <h4 v-show="!isNoteSaved" class="saved-status">Unsaved note</h4>
       <div class="title-container">
         <label class="title-label">Title:</label>
-        <input class="title-label" required />
+        <input class="title-label" v-model="note.title" required />
       </div>
       <label class="note-label">Payload:</label>
-      <textarea v-model="note"></textarea>
+      <textarea v-model="note.payload"></textarea>
       <div v-if="error">{{ error }}</div>
-      <button v-if="!isPending">Save</button>
+      <button v-if="!isPending">Create</button>
       <button v-else disabled>Saving...</button>
     </form>
   </div>
@@ -18,6 +17,7 @@
 
 <script setup>
 import { ref } from "vue";
+import AddUsers from "@/components/AddUsers.vue";
 import userAuthState from "@/composables/userAuthState";
 import useDoc from "@/composables/useDoc";
 import { useRouter } from "vue-router";
@@ -25,11 +25,18 @@ import { Timestamp } from "@firebase/firestore";
 import { watch } from "vue";
 import { onBeforeMount } from "vue";
 
-const note = ref("");
-const isNoteSaved = ref(true);
-const isDocChanged = ref(false);
 const router = useRouter();
 const { user } = userAuthState();
+
+const note = ref({
+  title: "",
+  payload: "",
+  owner: user.value.email,
+  users: [],
+});
+
+const sharedUsers = ref([]);
+
 const {
   getDocument,
   getDocumentRealtime,
@@ -38,51 +45,31 @@ const {
   updateDocument,
   error,
   isPending,
-} = useDoc("notes");
+} = useDoc("shared-notes");
 
 const handleSubmit = async () => {
+  console.log(sharedUsers.value);
+
   let savedNote = {
-    payload: note.value,
+    ...note.value,
     modifiedAt: Timestamp.fromDate(new Date()),
   };
 
-  await addDocument(user.value.uid, savedNote);
+  await addDocument(savedNote);
 
   if (error.value) {
     return;
   }
 
-  isNoteSaved.value = true;
+  router.push({ name: "shared" });
 };
-
-const handleView = async () => {
-  await handleSubmit();
-  router.push({ name: "viewer" });
-};
-
-onBeforeMount(() => {
-  const { document: doc } = getDocumentRealtime(user.value.uid);
-
-  watch(doc, () => {
-    isDocChanged.value = true;
-    note.value = doc.value.payload;
-  });
-
-  watch(note, () => {
-    if (!isDocChanged.value) {
-      isNoteSaved.value = false;
-    } else {
-      isDocChanged.value = false;
-    }
-  });
-});
 </script>
 
 <style scoped>
 .note-content {
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: 50px 1fr;
+  grid-template-rows: 1fr;
   height: 90svh;
 }
 form {
@@ -100,11 +87,7 @@ form > textarea {
 button:disabled {
   background-color: rgb(51, 50, 50);
 }
-.saved-status {
-  font-weight: bold;
-  color: brown;
-  text-align: center;
-}
+
 .title-container {
   display: flex;
   align-items: center;

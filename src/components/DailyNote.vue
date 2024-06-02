@@ -23,7 +23,7 @@ const isNoteSaved = ref(true);
 const isNewlyLoadedNote = ref(true);
 const isDocChanged = ref(false);
 const { user } = userAuthState();
-const { getDocumentRealtime, addDocument, deleteDocument, error, isPending } =
+const { getDocumentRealtime, setDocument, deleteDocument, error, isPending } =
   useDoc("notes", "daily");
 
 const router = useRouter();
@@ -42,7 +42,7 @@ const handleSubmit = async () => {
       payload: note.value,
     };
 
-    await addDocument(user.value.uid, savedNote, props.selectedDate);
+    await setDocument(user.value.uid, savedNote, props.selectedDate);
 
     if (error.value) {
       return;

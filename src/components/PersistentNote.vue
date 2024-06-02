@@ -29,7 +29,7 @@ const { user } = userAuthState();
 const {
   getDocument,
   getDocumentRealtime,
-  addDocument,
+  setDocument,
   deleteDocument,
   updateDocument,
   error,
@@ -42,7 +42,7 @@ const handleSubmit = async () => {
     modifiedAt: Timestamp.fromDate(new Date()),
   };
 
-  await addDocument(user.value.uid, savedNote);
+  await setDocument(user.value.uid, savedNote);
 
   if (error.value) {
     return;

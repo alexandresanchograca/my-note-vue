@@ -34,7 +34,7 @@ const router = useRouter();
 const { user } = userAuthState();
 const {
   getDocumentRealtime,
-  addDocument,
+  setDocument,
   deleteDocument,
   updateDocument,
   error,
@@ -49,7 +49,7 @@ const handleSubmit = async () => {
 
   console.log(note.value);
 
-  await addDocument(props.noteId, savedNote);
+  await setDocument(props.noteId, savedNote);
 
   if (error.value) {
     return;

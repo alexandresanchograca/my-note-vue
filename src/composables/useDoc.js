@@ -1,13 +1,15 @@
-import { ref, watchEffect } from "vue";
+import { db } from "@/firebase/config.js";
 import {
-  getDoc,
-  setDoc,
+  addDoc,
+  collection,
   deleteDoc,
   doc,
-  updateDoc,
+  getDoc,
   onSnapshot,
+  setDoc,
+  updateDoc,
 } from "firebase/firestore";
-import { db } from "@/firebase/config.js";
+import { ref, watchEffect } from "vue";
 
 const useDoc = (collectionName, subCollectionName) => {
   const error = ref("");
@@ -60,13 +62,27 @@ const useDoc = (collectionName, subCollectionName) => {
     }
   };
 
-  const addDocument = async (documentId, documentData, timestamp) => {
+  const addDocument = async (documentData) => {
+    error.value = "";
+    isPending.value = true;
+
+    try {
+      return await addDoc(collection(db, collectionName), documentData);
+    } catch (err) {
+      error.value = err.message;
+    } finally {
+      isPending.value = false;
+    }
+  };
+
+  const setDocument = async (documentId, documentData, timestamp) => {
     error.value = "";
     isPending.value = true;
 
     try {
       let collectionPath = collectionName;
       let documentName = documentId;
+
       if (subCollectionName && timestamp) {
         collectionPath = `${collectionName}/${documentId}/${subCollectionName}`;
         documentName = timestamp;
@@ -80,7 +96,6 @@ const useDoc = (collectionName, subCollectionName) => {
       isPending.value = false;
     }
   };
-
   const deleteDocument = async (documentId, timestamp) => {
     error.value = "";
     isPending.value = true;
@@ -120,6 +135,7 @@ const useDoc = (collectionName, subCollectionName) => {
     getDocument,
     getDocumentRealtime,
     addDocument,
+    setDocument,
     deleteDocument,
     updateDocument,
     error,
