@@ -109,8 +109,25 @@ button:disabled {
   color: brown;
   text-align: center;
 }
+
+.title-container {
+  display: flex;
+  align-items: center;
+  font-size: 1.2rem;
+  border: 0px;
+  border-bottom: 1px;
+  border-color: rgb(222, 222, 220);
+  border-style: dashed;
+  margin-bottom: 20px;
+}
+
+.title-container input {
+  font-size: 1.2rem;
+}
+
 .note-label {
   border: 0px;
+  margin-top: 10px;
   padding-bottom: 10px;
   margin-bottom: 10px;
   border-bottom: 1px;
