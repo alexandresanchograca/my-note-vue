@@ -4,7 +4,7 @@ import LoginView from "@/views/LoginView.vue";
 import SignupView from "@/views/SignupView.vue";
 import { auth } from "@/firebase/config";
 import DailyView from "@/views/DailyView.vue";
-import SharedView from "@/views/SharedView.vue";
+import NoteListView from "@/views/NoteListView.vue";
 import CreateView from "@/views/CreateView.vue";
 import MarkdownView from "@/views/MarkdownView.vue";
 import NoteView from "@/views/NoteView.vue";
@@ -32,7 +32,7 @@ const routes = [
   {
     path: "/shared",
     name: "shared",
-    component: SharedView,
+    component: NoteListView,
   },
   {
     path: "/create",

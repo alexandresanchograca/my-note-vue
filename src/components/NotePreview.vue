@@ -1,0 +1,103 @@
+<template>
+  <div class="note">
+    <button
+      v-if="isOwner(note)"
+      class="delete item-btn"
+      @click="handleDelete(note)"
+    >
+      <i class="fa-solid fa-trash"></i>
+    </button>
+    <ul v-if="note.users">
+      <li v-for="user in note.users" :key="user">
+        <i class="fa-solid fa-user"></i> {{ user }}
+      </li>
+      <li v-if="note.users.length > 3"><i class="fa-solid fa-user"></i> ...</li>
+    </ul>
+    <div class="note-title">
+      <h3>{{ note.title }}</h3>
+    </div>
+    <button class="view item-btn" @click="handleView(note)">View</button>
+  </div>
+</template>
+
+<script setup>
+import { useRouter } from "vue-router";
+import userAuthState from "@/composables/userAuthState";
+import useDoc from "@/composables/useDoc";
+
+const props = defineProps(["note"]);
+
+const { deleteDocument } = useDoc("shared-notes");
+const { user } = userAuthState();
+const router = useRouter();
+
+const isOwner = (note) => {
+  return note.owner === user.value.email;
+};
+const handleDelete = async (note) => {
+  await deleteDocument(note.id);
+};
+
+const handleView = (note) => {
+  router.push({ name: "note", params: { id: note.id } });
+};
+</script>
+
+<style scoped>
+.note {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-sizing: border-box;
+  border-radius: 8px;
+  padding: 16px 10px;
+  gap: 2.8rem;
+  height: 140px;
+  overflow: hidden;
+  background: #575757;
+}
+
+.note-title {
+  overflow: hidden;
+}
+
+h3 {
+  text-wrap: wrap;
+  font-weight: bold;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+  line-height: 1.6rem;
+
+  @media (max-width: 600px) {
+    display: none;
+  }
+}
+
+li {
+  font-size: 0.85rem;
+  text-wrap: nowrap;
+}
+
+.fa-user {
+  color: #252222;
+}
+
+.item-btn {
+  height: 80%;
+  flex-shrink: 0;
+}
+
+.view {
+  margin: 20px;
+  width: 160px;
+  background-color: var(--secondary);
+}
+
+.delete {
+  margin: 20px 0px;
+  background-color: rgba(150, 37, 0, 0.5);
+}
+</style>

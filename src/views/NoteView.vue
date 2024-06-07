@@ -1,11 +1,11 @@
 <template>
   <div v-if="id">
-    <SharedNote :noteId="id"></SharedNote>
+    <NoteItem :noteId="id"></NoteItem>
   </div>
 </template>
 
 <script setup>
-import SharedNote from "@/components/SharedNote.vue";
+import NoteItem from "@/components/NoteItem.vue";
 
 const props = defineProps(["id"]);
 </script>

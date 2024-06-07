@@ -22,7 +22,6 @@ import userAuthState from "@/composables/userAuthState";
 import useDoc from "@/composables/useDoc";
 import { useRouter } from "vue-router";
 import { Timestamp } from "@firebase/firestore";
-import { onBeforeMount } from "vue";
 
 const router = useRouter();
 const { user } = userAuthState();
