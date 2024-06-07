@@ -18,7 +18,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, watchEffect } from "vue";
 import userAuthState from "@/composables/userAuthState";
 import useDoc from "@/composables/useDoc";
 import { useRouter } from "vue-router";
@@ -30,6 +30,10 @@ import AddUsers from "./AddUsers.vue";
 const props = defineProps(["noteId"]);
 
 const note = ref("");
+
+const noteTitle = ref("");
+const notePayload = ref("");
+
 const isNoteSaved = ref(true);
 const isDocChanged = ref(false);
 const router = useRouter();
@@ -74,13 +78,18 @@ onBeforeMount(() => {
     note.value = doc.value;
   });
 
-  watch(note, () => {
-    if (!isDocChanged.value) {
-      isNoteSaved.value = false;
-    } else {
-      isDocChanged.value = false;
-    }
-  });
+  watch(
+    note,
+    () => {
+      console.log("Note value changed");
+      if (!isDocChanged.value) {
+        isNoteSaved.value = false;
+      } else {
+        isDocChanged.value = false;
+      }
+    },
+    { deep: true }
+  );
 });
 </script>
 
