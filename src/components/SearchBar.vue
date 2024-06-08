@@ -6,7 +6,7 @@
     </form>
     <NotePreview
       v-for="note in searchedNotes"
-      :key="note.modifiedAt"
+      :key="note.payload"
       :note="note"
     ></NotePreview>
   </div>
