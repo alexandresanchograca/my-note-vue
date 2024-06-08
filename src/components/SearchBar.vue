@@ -25,24 +25,25 @@ import userAuthState from "@/composables/userAuthState";
 import useDoc from "@/composables/useDoc";
 import { ref, watch } from "vue";
 
-const { getDocuments } = useCollection();
 const { user } = userAuthState();
 const searchValue = ref("");
 const searchedNotes = ref([]);
 const searchedDailyNotes = ref([]);
 
+/* Getting persistent note */
+const { getDocumentRealtime, error: docError } = useDoc("notes");
+const { document: doc } = getDocumentRealtime(user.value.uid);
+
+/* Getting note list (shared notes)*/
+const { getDocuments } = useCollection();
 const { documents: notes, error } = getDocuments(
   "shared-notes",
   ["users", "array-contains", user.value.email],
   ["owner", "==", user.value.email]
 );
 
-const { getDocumentRealtime, error: docError } = useDoc("notes");
-
-const { document: doc } = getDocumentRealtime(user.value.uid);
-
+/* Getting daily notes */
 const { getSubcollectionDocuments } = useCollection();
-
 const { documents: dailyNotes, error: dailyError } = getSubcollectionDocuments(
   "notes",
   user.value.uid,
@@ -74,31 +75,36 @@ watch(
 );
 
 const searchNotes = (notesCollection, searchParams) => {
-  const searchValues = searchParams.value.toLowerCase().split(" ");
-  const tempNotes = [];
+  const searchValues = searchParams.toLowerCase().split(" ");
+  const tempNotes = new Set();
 
   //Only the loops are O(n*m)... and the includes is O(k) = O(n*m*k)
   //Using for loops as copium for this
-  for (var i = 0; i < notesCollection.value.length; i++) {
-    const noteTitle = notesCollection.value[i].title;
-    const notePayload = notesCollection.value[i].payload.toLowerCase();
+  for (var i = 0; i < notesCollection.length; i++) {
+    const noteTitle = notesCollection[i].title;
+    const notePayload = notesCollection[i].payload.toLowerCase();
     for (var j = 0; j < searchValues.length; j++) {
       if (notePayload.includes(searchValues[j])) {
-        tempNotes.push(notesCollection.value[i]);
+        tempNotes.add(notesCollection[i]);
       }
 
       if (noteTitle && noteTitle.includes(searchValues[j])) {
-        tempNotes.push(notesCollection.value[i]);
+        tempNotes.add(notesCollection[i]);
       }
     }
   }
 
-  return tempNotes;
+  return Array.from(tempNotes);
 };
 
 const handleSearch = () => {
-  searchedNotes.value = searchNotes(notes, searchValue);
-  searchedDailyNotes.value = searchNotes(dailyNotes, searchValue);
+  searchedNotes.value = searchNotes(notes.value, searchValue.value);
+  const persistentNote = searchNotes(
+    [{ ...doc.value, isPersistent: true }],
+    searchValue.value
+  )[0];
+  searchedNotes.value.push(persistentNote);
+  searchedDailyNotes.value = searchNotes(dailyNotes.value, searchValue.value);
 };
 </script>
 
