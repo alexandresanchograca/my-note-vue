@@ -91,9 +91,10 @@ const handlePropsChange = () => {
 };
 
 onBeforeMount(() => {
+  handleGetDoc();
   watch(props, handlePropsChange);
 
-  const wat = watch(note, () => {
+  const unWatch = watch(note, () => {
     if (!isNewlyLoadedNote.value && !isDocChanged.value) {
       isNoteSaved.value = false;
     } else {

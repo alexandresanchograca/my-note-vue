@@ -2,7 +2,6 @@
   <div class="note-calendar">
     <DatePicker
       transparent
-      @click="emitSelectedDate"
       :attributes="attrs"
       v-model="date"
       :is-required="true"
@@ -12,21 +11,20 @@
 
 <script setup>
 import { DatePicker } from "v-calendar";
-import { onMounted, ref, watch, watchEffect } from "vue";
+import { onMounted, ref, watch, defineModel } from "vue";
 import useCollection from "@/composables/useCollection";
 import userAuthState from "@/composables/userAuthState";
 
 const date = ref(new Date());
 const attrs = ref(null);
-const selectedDate = ref(date.value.toISOString().substring(0, 10));
 const { user } = userAuthState();
-const emit = defineEmits(["changedDate"]);
+
+const selectedDate = defineModel();
 
 const { getDocumentIdsRealtime } = useCollection();
 
-const emitSelectedDate = () => {
+const assignSelectedDate = () => {
   selectedDate.value = date.value.toISOString().substring(0, 10);
-  emit("changedDate", selectedDate.value);
 };
 
 const { documentIds } = getDocumentIdsRealtime(`notes/${user.value.uid}/daily`);
@@ -40,7 +38,17 @@ watch(documentIds, () => {
   ];
 });
 
-onMounted(emitSelectedDate);
+onMounted(() => {
+  if (!selectedDate.value) {
+    assignSelectedDate();
+  } else {
+    date.value = new Date(selectedDate.value);
+  }
+
+  watch(date, () => {
+    assignSelectedDate();
+  });
+});
 </script>
 
 <style>

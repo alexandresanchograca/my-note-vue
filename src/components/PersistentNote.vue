@@ -53,7 +53,6 @@ const handleSubmit = async () => {
 
 const handleView = async () => {
   await handleSubmit();
-  console.log("waht", note.value);
   router.push({ name: "viewer", state: { payload: note.value } });
 };
 

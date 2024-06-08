@@ -18,7 +18,7 @@
 </template>
 
 <script setup>
-import { ref, watchEffect } from "vue";
+import { ref } from "vue";
 import userAuthState from "@/composables/userAuthState";
 import useDoc from "@/composables/useDoc";
 import { useRouter } from "vue-router";
@@ -31,13 +31,9 @@ const props = defineProps(["noteId"]);
 
 const note = ref("");
 
-const noteTitle = ref("");
-const notePayload = ref("");
-
 const isNoteSaved = ref(true);
 const isDocChanged = ref(false);
 const router = useRouter();
-const { user } = userAuthState();
 const { getDocumentRealtime, setDocument, deleteDocument, error, isPending } =
   useDoc("shared-notes");
 
@@ -81,7 +77,6 @@ onBeforeMount(() => {
   watch(
     note,
     () => {
-      console.log("Note value changed");
       if (!isDocChanged.value) {
         isNoteSaved.value = false;
       } else {

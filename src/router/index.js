@@ -8,6 +8,7 @@ import NoteListView from "@/views/NoteListView.vue";
 import CreateView from "@/views/CreateView.vue";
 import MarkdownView from "@/views/MarkdownView.vue";
 import NoteView from "@/views/NoteView.vue";
+import SearchView from "@/views/SearchView.vue";
 
 function isAuthed(to, from, next) {
   if (auth.currentUser) {
@@ -25,9 +26,10 @@ const routes = [
     beforeEnter: isAuthed,
   },
   {
-    path: "/daily",
+    path: "/daily/:date?",
     name: "daily",
     component: DailyView,
+    props: true,
   },
   {
     path: "/shared",
@@ -38,6 +40,11 @@ const routes = [
     path: "/create",
     name: "create",
     component: CreateView,
+  },
+  {
+    path: "/search",
+    name: "search",
+    component: SearchView,
   },
   {
     path: "/viewer",

@@ -7,6 +7,7 @@
           <router-link :to="{ name: 'home' }">Forever Note</router-link>
           <router-link :to="{ name: 'daily' }">Daily Notes</router-link>
           <router-link :to="{ name: 'shared' }">Note List</router-link>
+          <router-link :to="{ name: 'search' }">Search Notes</router-link>
           <span class="user-status">Logged in {{ user.email }}</span>
           <button @click="handleLogout">Logout</button>
         </div>

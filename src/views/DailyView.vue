@@ -2,10 +2,7 @@
   <div class="daily-content">
     <button @click="wasViewClicked = true">View in markdown</button>
     <div class="daily-notes">
-      <NoteCalendar
-        class="calendar-col"
-        @changedDate="handleDate"
-      ></NoteCalendar>
+      <NoteCalendar class="calendar-col" v-model="selectedDate"></NoteCalendar>
       <DailyNote
         class="note-col"
         :selectedDate="selectedDate"
@@ -20,12 +17,9 @@ import DailyNote from "@/components/DailyNote.vue";
 import NoteCalendar from "@/components/NoteCalendar.vue";
 import { ref } from "vue";
 
-const selectedDate = ref(null);
+const props = defineProps(["date"]);
+const selectedDate = ref(props.date);
 const wasViewClicked = ref(false);
-
-const handleDate = (eventData) => {
-  selectedDate.value = eventData;
-};
 </script>
 
 <style scoped>

@@ -4,6 +4,7 @@
       v-if="isOwner(note)"
       class="delete item-btn"
       @click="handleDelete(note)"
+      :disabled="note.isPersistent"
     >
       <i class="fa-solid fa-trash"></i>
     </button>
@@ -14,7 +15,9 @@
       <li v-if="note.users.length > 3"><i class="fa-solid fa-user"></i> ...</li>
     </ul>
     <div class="note-title">
-      <h3>{{ note.title }}</h3>
+      <h3 v-if="note.title">{{ note.title }}</h3>
+      <h3 v-else-if="note.isPersistent">Persistent Note</h3>
+      <h3 v-else-if="dailyNote">{{ note.id }}</h3>
     </div>
     <button class="view item-btn" @click="handleView(note)">View</button>
   </div>
@@ -25,21 +28,35 @@ import { useRouter } from "vue-router";
 import userAuthState from "@/composables/userAuthState";
 import useDoc from "@/composables/useDoc";
 
-const props = defineProps(["note"]);
+const props = defineProps(["note", "dailyNote"]);
 
 const { deleteDocument } = useDoc("shared-notes");
+const { deleteDocument: deleteDaily } = useDoc("notes", "daily");
 const { user } = userAuthState();
 const router = useRouter();
 
 const isOwner = (note) => {
-  return note.owner === user.value.email;
+  return (
+    note.isPersistent || props.dailyNote || note.owner === user.value.email
+  );
 };
+
 const handleDelete = async (note) => {
-  await deleteDocument(note.id);
+  if (props.dailyNote) {
+    await deleteDaily(user.value.uid, note.id);
+  } else {
+    await deleteDocument(note.id);
+  }
 };
 
 const handleView = (note) => {
-  router.push({ name: "note", params: { id: note.id } });
+  if (note.isPersistent) {
+    router.push({ name: "home" });
+  } else if (props.dailyNote) {
+    router.push({ name: "daily", params: { date: note.id } });
+  } else {
+    router.push({ name: "note", params: { id: note.id } });
+  }
 };
 </script>
 

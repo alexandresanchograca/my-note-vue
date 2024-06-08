@@ -19,7 +19,6 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
 import { defineModel } from "vue";
 
 const sharedUsers = defineModel();

@@ -11,6 +11,39 @@ import { db } from "@/firebase/config.js";
 import { ref, watchEffect } from "vue";
 
 const useCollection = () => {
+  const getSubcollectionDocuments = (
+    collectionName,
+    documentName,
+    subCollectionName
+  ) => {
+    const error = ref(null);
+    const documents = ref([]);
+
+    const colRef = collection(
+      db,
+      `${collectionName}/${documentName}/${subCollectionName}`
+    );
+    const q = query(colRef);
+
+    const unsub = onSnapshot(
+      q,
+      (querySnapshot) => {
+        documents.value = querySnapshot.docs.map((doc) => {
+          return { ...doc.data(), id: doc.id };
+        });
+      },
+      (err) => {
+        error.value = err.message;
+      }
+    );
+
+    watchEffect((onInvalidate) => {
+      onInvalidate(() => unsub());
+    });
+
+    return { documents, error };
+  };
+
   const getDocumentIds = async (collectionName) => {
     const error = ref(null);
     const documentIds = ref([]);
@@ -84,7 +117,12 @@ const useCollection = () => {
     return { documents, error };
   };
 
-  return { getDocumentIds, getDocumentIdsRealtime, getDocuments };
+  return {
+    getDocumentIds,
+    getDocumentIdsRealtime,
+    getDocuments,
+    getSubcollectionDocuments,
+  };
 };
 
 export default useCollection;
