@@ -6,14 +6,8 @@
     </form>
     <NotePreview
       v-for="note in searchedNotes"
-      :key="note.title"
+      :key="note.modifiedAt"
       :note="note"
-    ></NotePreview>
-    <NotePreview
-      v-for="note in searchedDailyNotes"
-      :key="note.title"
-      :note="note"
-      :dailyNote="true"
     ></NotePreview>
   </div>
 </template>
@@ -28,7 +22,6 @@ import { ref, watch } from "vue";
 const { user } = userAuthState();
 const searchValue = ref("");
 const searchedNotes = ref([]);
-const searchedDailyNotes = ref([]);
 
 /* Getting persistent note */
 const { getDocumentRealtime, error: docError } = useDoc("notes");
@@ -69,7 +62,9 @@ watch(
 watch(
   dailyNotes,
   () => {
-    dailyNotes.value.forEach((note) => searchedDailyNotes.value.push(note));
+    dailyNotes.value.forEach((note) =>
+      searchedNotes.value.push({ ...note, isDaily: true })
+    );
   },
   { once: true }
 );
@@ -99,12 +94,17 @@ const searchNotes = (notesCollection, searchParams) => {
 
 const handleSearch = () => {
   searchedNotes.value = searchNotes(notes.value, searchValue.value);
-  const persistentNote = searchNotes(
+
+  searchNotes(
     [{ ...doc.value, isPersistent: true }],
     searchValue.value
-  )[0];
-  searchedNotes.value.push(persistentNote);
-  searchedDailyNotes.value = searchNotes(dailyNotes.value, searchValue.value);
+  ).forEach((note) => searchedNotes.value.push(note));
+
+  const searchedDailyNotes = searchNotes(dailyNotes.value, searchValue.value);
+
+  searchedDailyNotes.forEach((note) =>
+    searchedNotes.value.push({ ...note, isDaily: true })
+  );
 };
 </script>
 
