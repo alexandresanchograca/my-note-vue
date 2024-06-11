@@ -5,7 +5,11 @@
     </button>
     <button v-else class="add-user" @click="handleShare">+ Add user</button>
     <form v-if="sharedUsers.length" @submit.prevent="">
-      <div v-for="(user, index) in sharedUsers" :key="user" class="shared-user">
+      <div
+        v-for="(user, index) in sharedUsers"
+        :key="`user-${index}`"
+        class="shared-user"
+      >
         <label :for="`email-${index}`">User Email:</label>
         <input
           :name="`email-${index}`"
