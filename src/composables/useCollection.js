@@ -6,6 +6,7 @@ import {
   getDoc,
   where,
   onSnapshot,
+  orderBy,
 } from "firebase/firestore";
 import { db } from "@/firebase/config.js";
 import { ref, watchEffect } from "vue";
@@ -94,7 +95,11 @@ const useCollection = () => {
     let q = query(colRef);
 
     if (firstQueryParam && secQueryParam) {
-      q = query(colRef, or(where(...firstQueryParam), where(...secQueryParam)));
+      q = query(
+        colRef,
+        or(where(...firstQueryParam), where(...secQueryParam)),
+        orderBy("modifiedAt", "desc")
+      );
     }
 
     const unsub = onSnapshot(
