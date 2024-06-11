@@ -3,7 +3,7 @@
     <button class="btn" @click="handleCreate">Create note</button>
     <div
       class="drop-zone"
-      @drop="onDrop($event, 0)"
+      @drop="onDrop($event, -1)"
       @dragenter.prevent
       @dragover.prevent
     ></div>
@@ -61,16 +61,17 @@ const onDrop = async (event, index) => {
   const grabbedNote = notes.value[draggedNoteIndex];
   const targetNote = notes.value[index];
 
-  if (!grabbedNote || !targetNote) {
-    return;
-  }
-
-  const temp = grabbedNote.modifiedAt.seconds;
-  grabbedNote.modifiedAt.seconds = targetNote.modifiedAt.seconds;
-  targetNote.modifiedAt.seconds = temp;
+  grabbedNote.modifiedAt.seconds = targetNote
+    ? targetNote.modifiedAt.seconds - 1
+    : Timestamp.fromDate(new Date()).seconds;
 
   await updateDocument(grabbedNote.id, { modifiedAt: grabbedNote.modifiedAt });
-  await updateDocument(targetNote.id, { modifiedAt: targetNote.modifiedAt });
+
+  const nextNote = notes.value[index + 1];
+  if (nextNote) {
+    nextNote.modifiedAt.seconds -= 1;
+    await updateDocument(nextNote.id, { modifiedAt: nextNote.modifiedAt });
+  }
 };
 
 const handleCreate = () => {
