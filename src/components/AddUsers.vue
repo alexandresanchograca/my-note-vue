@@ -5,6 +5,7 @@
     </button>
     <button v-else class="add-user" @click="handleShare">+ Add user</button>
     <form v-if="sharedUsers.length" @submit.prevent="">
+      <!-- Todo: index shouldnt be used as a key here -->
       <div
         v-for="(user, index) in sharedUsers"
         :key="`user-${index}`"
