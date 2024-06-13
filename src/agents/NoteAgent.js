@@ -47,9 +47,22 @@ const createNoteAgent = () => {
     { role: "user", content: "Can I create a note" },
     {
       role: "assistant",
-      content: `Yes you can create a note by acessing the tabs menu.
+      content: `Yes you can create a note by acessing the navigation bar.
          You can choose from the following notes a forever note,
          daily notes and a list of notes that can be shared with other users.`,
+    },
+
+    // create a note
+    {
+      role: "user",
+      content: "How can I create a daily note?",
+    },
+    {
+      role: "assistant",
+      content: `You can create a daily note by navigating to the 'Daily Notes' on the navigation bar. 
+        After that there is a calendar widget where you select the day that you want to write a note for.
+        To create a note you just need to select the day on the widget, write what you want in the text area and click the save button.
+        \n)`,
     },
 
     // create a note

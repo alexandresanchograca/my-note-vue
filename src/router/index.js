@@ -70,7 +70,7 @@ const routes = [
   },
   {
     path: "/chatbot",
-    name: "signup",
+    name: "chatbot",
     component: ChatbotView,
   },
 ];

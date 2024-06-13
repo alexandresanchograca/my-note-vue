@@ -3,7 +3,7 @@
     <div class="chat-window">
       <div v-if="messages" class="messages" ref="messagesDiv">
         <div v-for="message in messages" :key="message.created" class="single">
-          <span class="name">{{ message.user }} </span>
+          <span class="name">{{ message.user }}: </span>
           <span class="message">{{ message.message }} </span>
         </div>
       </div>
@@ -30,6 +30,14 @@ const userInput = ref("");
 const messages = ref([]);
 const noteAgent = useNoteAgent();
 
+onMounted(() => {
+  messages.value.push({
+    user: "Note Agent",
+    created: Date.now(),
+    message: "Hi! How can I help you today?",
+  });
+});
+
 const handleSubmit = async () => {
   messages.value.push({
     user: "You",
@@ -38,8 +46,6 @@ const handleSubmit = async () => {
   });
 
   const message = await noteAgent.ask(userInput.value);
-
-  console.log("whaat", message);
 
   if (noteAgent.error.value) {
     return;
@@ -59,22 +65,33 @@ onUpdated(() => {
 
 <style scoped>
 .chat-window {
-  display: flex;
-  flex-direction: column;
-  margin: 5px;
-  gap: 10px;
   background-color: var(--widget-colors);
   box-sizing: border-box;
   border-radius: 8px;
   padding: 30px 20px;
+  margin: 5px;
 }
 
 .single {
-  margin: 18px 2px;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--secondary);
+  margin: 5px;
+  gap: 10px;
+  border-radius: 8px;
+  padding: 12px;
+}
+.name {
+  font-weight: bold;
+  margin-right: 6px;
 }
 
 .messages {
   max-height: 400px;
   overflow: auto;
+}
+
+form {
+  margin: 5px;
 }
 </style>

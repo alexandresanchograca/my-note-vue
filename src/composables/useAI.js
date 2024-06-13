@@ -14,18 +14,14 @@ const useNoteAgent = () => {
   const ask = async (newMessage) => {
     error.value = null;
     isPending.value = true;
-    messages.value.push({
-      user: "Note Agent",
-      role: "user",
-      content: newMessage,
-    });
+    messages.value.push({ role: "user", content: newMessage });
 
     try {
       const result = await callGPT({ messages: messages.value });
       const message = result.data.choices?.[0]?.message?.content;
       const created = result.data.created;
 
-      return { created, message };
+      return { user: "Note Agent", created, message };
     } catch (err) {
       error.value = err.message;
     } finally {
