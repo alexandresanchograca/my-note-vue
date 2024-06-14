@@ -3,7 +3,6 @@ import {
   query,
   or,
   getDocs,
-  getDoc,
   where,
   onSnapshot,
   orderBy,
