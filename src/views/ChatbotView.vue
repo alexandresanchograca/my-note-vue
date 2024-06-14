@@ -52,11 +52,6 @@ marked.use({
   },
 });
 
-watch(messages, () => {
-  formattedMessages.value.push(marked.parse(note.value));
-  prism.highlightAll();
-});
-
 onMounted(() => {
   const message = "Hi!, How can I help you today";
   const formattedMessage = marked.parse(message);
