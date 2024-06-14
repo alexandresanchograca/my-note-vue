@@ -31,7 +31,6 @@ import prism from "prismjs";
 // Add numbering to the Code blocks
 import "prismjs/plugins/line-numbers/prism-line-numbers.js";
 import "prismjs/plugins/line-numbers/prism-line-numbers.css";
-
 import "prismjs/plugins/toolbar/prism-toolbar.js"; // required for the following plugins
 import "prismjs/plugins/toolbar/prism-toolbar.css"; // required for the following plugins
 import "prismjs/plugins/copy-to-clipboard/prism-copy-to-clipboard.js"; // show copy button
@@ -50,11 +49,6 @@ marked.use({
       return code;
     }
   },
-});
-
-watch(messages, () => {
-  formattedMessages.value.push(marked.parse(note.value));
-  prism.highlightAll();
 });
 
 onMounted(() => {
