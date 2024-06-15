@@ -18,10 +18,16 @@ const useNoteAgent = () => {
 
     try {
       const result = await callGPT({ messages: messages.value });
-      const message = result.data.choices?.[0]?.message?.content;
+      const message = result.data.choices?.[0]?.message;
+
+      if (message) {
+        messages.value.push(message);
+      }
+
+      const messageContent = message?.content;
       const created = result.data.created;
 
-      return { user: "Note Agent", created, message };
+      return { user: "Note Agent", created, message: messageContent };
     } catch (err) {
       error.value = err.message;
     } finally {

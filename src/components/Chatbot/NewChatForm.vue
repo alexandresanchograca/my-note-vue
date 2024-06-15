@@ -1,11 +1,14 @@
 <template>
-  <form>
-    <textarea
+  <form @submit.prevent="handleSubmit">
+    <input
+      type="text"
       placeholder="Type a message...."
       v-model="userInput"
-      @keypress.enter.prevent="handleSubmit"
       :disabled="pendingResponse"
-    ></textarea>
+    />
+    <button :disabled="pendingResponse">
+      <i class="fa-solid fa-paper-plane"></i>
+    </button>
   </form>
 </template>
 
@@ -56,6 +59,18 @@ const handleSubmit = () => {
 
 <style scoped>
 form {
+  display: flex;
   border-radius: 0px 0px 8px 8px;
+}
+
+form input {
+  width: 95%;
+}
+
+form button {
+  box-sizing: border-box;
+  flex-grow: 1;
+  margin-left: 10px;
+  padding: 10px;
 }
 </style>
