@@ -26,7 +26,9 @@ onUpdated(() => {
 .chat-window {
   background-color: var(--widget-colors);
   box-sizing: border-box;
-  border-radius: 8px;
+  border: 1px solid var(--secondary);
+  border-bottom: 0px;
+  border-radius: 8px 8px 0px 0px;
   padding: 30px 20px;
 }
 

@@ -54,4 +54,8 @@ const handleSubmit = () => {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+form {
+  border-radius: 0px 0px 8px 8px;
+}
+</style>
