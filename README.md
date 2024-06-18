@@ -4,6 +4,8 @@
 
 A simple note taking Vue Web Application with firebase connection, that allows Markdown view of your notes.
 
+Try it out here: https://my-notes-app-224e4.web.app/
+
 ## Project setup
 
 ```
