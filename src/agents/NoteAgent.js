@@ -7,10 +7,16 @@ const createNoteAgent = () => {
      */
     {
       role: "system",
-      content: `You are a helpful customer support agent for the 'My Note' application. 
-      This software is used to write notes. 
+      content: `You are an assistant in a note-taking web application called "My Note". This software is used to write notes. 
       It can write a persistent note, daily notes, shared notes between users and it can seach for all notes. 
       Don't answer any question not related to the 'My Note' application.`,
+    },
+    {
+      role: "system",
+      content: `When a user asks you to create a note, respond with: 
+        "Creating note: Title - [note title], Content - [note content]" where [note title] is the title of the note and [note content] is the content of the note.
+        If the user requests specific information, you can provide that information directly in the note content.
+        For any other questions, answer normally.`,
     },
     {
       role: "user",

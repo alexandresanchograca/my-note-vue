@@ -36,6 +36,18 @@ button,
   cursor: pointer;
   display: inline-block;
 }
+
+.widget-btn {
+  background: var(--widget-colors);
+  border-radius: 8px;
+  margin-top: 8px;
+  border: 0;
+  padding: 8px 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-block;
+}
+
 button:hover,
 .btn:hover {
   background: var(--primary);

@@ -10,6 +10,7 @@ import { onMounted, ref } from "vue";
 import useNoteAgent from "@/composables/useAI.js";
 import ChatbotWindow from "@/components/Chatbot/ChatbotWindow.vue";
 import NewChatForm from "@/components/Chatbot/NewChatForm.vue";
+import useAIActions from "@/composables/useActions";
 
 import { marked } from "marked";
 import prism from "prismjs";
@@ -24,6 +25,7 @@ import "prismjs/plugins/show-language/prism-show-language.js"; // display the la
 
 const messages = ref([]);
 const { ask, error, isPending } = useNoteAgent();
+const { executeAction } = useAIActions();
 
 marked.use({
   highlight: (code, lang) => {
@@ -53,6 +55,15 @@ const handleSubmit = async (userMessage) => {
   const message = await ask(userMessage.rawInput);
 
   if (error.value) {
+    return;
+  }
+
+  //Checking if a actions is triggered or not
+  const actionResult = await executeAction(message);
+
+  if (actionResult) {
+    message.message = actionResult;
+    messages.value.push(message);
     return;
   }
 
