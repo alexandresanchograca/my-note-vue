@@ -4,7 +4,8 @@
     <div class="note-header">
       <label>Daily note:</label>
       <div class="font-size-changer">
-        <button class="btn" @click="increaseFontSize">+</button><button class="btn" @click="decreaseFontSize">-</button>
+        <button class="btn" @click="increaseFontSize">+</button>
+        <button class="btn" @click="decreaseFontSize">-</button>
       </div>
     </div>
     <textarea v-model="note" :style="{ fontSize: fontSize + 'px' }"></textarea>
@@ -15,11 +16,11 @@
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
+import {ref, watch} from "vue";
 import userAuthState from "@/composables/userAuthState";
 import useDoc from "@/composables/useDoc";
-import { useRouter } from "vue-router";
-import { onBeforeMount } from "vue";
+import {useRouter} from "vue-router";
+import {onBeforeMount} from "vue";
 
 const props = defineProps(["selectedDate", "wasViewClicked"]);
 
@@ -28,9 +29,9 @@ const fontSize = ref(16);
 const isNoteSaved = ref(true);
 const isNewlyLoadedNote = ref(true);
 const isDocChanged = ref(false);
-const { user } = userAuthState();
-const { getDocumentRealtime, setDocument, deleteDocument, error, isPending } =
-  useDoc("notes", "daily");
+const {user} = userAuthState();
+const {getDocumentRealtime, setDocument, deleteDocument, error, isPending} =
+    useDoc("notes", "daily");
 
 const router = useRouter();
 
@@ -60,9 +61,9 @@ const handleSubmit = async () => {
 
 let unWatchDoc = null;
 const handleGetDoc = () => {
-  const { document: doc } = getDocumentRealtime(
-    user.value.uid,
-    props.selectedDate
+  const {document: doc} = getDocumentRealtime(
+      user.value.uid,
+      props.selectedDate
   );
 
   if (unWatchDoc) {
@@ -85,7 +86,7 @@ const handleGetDoc = () => {
 
 const handleView = async () => {
   await handleSubmit();
-  router.push({ name: "viewer", state: { payload: note.value } });
+  router.push({name: "viewer", state: {payload: note.value}});
 };
 
 const handlePropsChange = () => {
@@ -124,6 +125,7 @@ form {
   flex-direction: column;
   margin: 5px;
 }
+
 form > textarea {
   flex-basis: 70vh;
 }
@@ -131,16 +133,18 @@ form > textarea {
 .note-content > button {
   margin: 5px;
 }
+
 button:disabled {
   background-color: rgb(51, 50, 50);
 }
+
 .saved-status {
   font-weight: bold;
   color: brown;
   text-align: center;
 }
 
-.note-header{
+.note-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -152,8 +156,9 @@ button:disabled {
   margin-bottom: 10px;
 }
 
-.font-size-changer{
+.font-size-changer {
   display: flex;
+  gap: 5px;
   align-items: center;
   justify-content: center;
   border: 1px solid rgba(177, 177, 177, 0.5);
@@ -162,7 +167,7 @@ button:disabled {
   margin: 0px
 }
 
-.btn{
+.btn {
   margin: 0px
 }
 </style>

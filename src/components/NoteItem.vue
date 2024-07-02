@@ -6,12 +6,13 @@
       <h4 v-show="!isNoteSaved" class="saved-status">Unsaved note</h4>
       <div class="title-container">
         <label class="title-label">Title:</label>
-        <input class="title-label" v-model="note.title" required />
+        <input class="title-label" v-model="note.title" required/>
       </div>
       <div class="note-header">
         <label>Payload:</label>
         <div class="font-size-changer">
-          <button class="btn" @click="increaseFontSize">+</button><button class="btn" @click="decreaseFontSize">-</button>
+          <button class="btn" @click="increaseFontSize">+</button>
+          <button class="btn" @click="decreaseFontSize">-</button>
         </div>
       </div>
       <textarea v-model="note.payload" :style="{ fontSize: fontSize + 'px' }"></textarea>
@@ -23,13 +24,13 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import {ref} from "vue";
 import userAuthState from "@/composables/userAuthState";
 import useDoc from "@/composables/useDoc";
-import { useRouter } from "vue-router";
-import { Timestamp } from "@firebase/firestore";
-import { watch } from "vue";
-import { onBeforeMount } from "vue";
+import {useRouter} from "vue-router";
+import {Timestamp} from "@firebase/firestore";
+import {watch} from "vue";
+import {onBeforeMount} from "vue";
 import AddUsers from "./AddUsers.vue";
 
 const props = defineProps(["noteId"]);
@@ -39,18 +40,18 @@ const fontSize = ref(16);
 const isNoteSaved = ref(true);
 const isDocChanged = ref(false);
 const router = useRouter();
-const { getDocumentRealtime, setDocument, deleteDocument, error, isPending } =
-  useDoc("shared-notes");
+const {getDocumentRealtime, setDocument, deleteDocument, error, isPending} =
+    useDoc("shared-notes");
 
 const handleSubmit = async () => {
   note.value.users = note.value.users
-    .filter((usr) => usr.length)
-    .reduce((acc, curr) => {
-      if (!acc.includes(curr)) {
-        acc.push(curr);
-      }
-      return acc;
-    }, []);
+      .filter((usr) => usr.length)
+      .reduce((acc, curr) => {
+        if (!acc.includes(curr)) {
+          acc.push(curr);
+        }
+        return acc;
+      }, []);
 
   let savedNote = {
     ...note.value,
@@ -68,11 +69,11 @@ const handleSubmit = async () => {
 
 const handleView = async () => {
   await handleSubmit();
-  router.push({ name: "viewer", state: { payload: note.value.payload } });
+  router.push({name: "viewer", state: {payload: note.value.payload}});
 };
 
 onBeforeMount(() => {
-  const { document: doc } = getDocumentRealtime(props.noteId);
+  const {document: doc} = getDocumentRealtime(props.noteId);
 
   watch(doc, () => {
     isDocChanged.value = true;
@@ -80,15 +81,15 @@ onBeforeMount(() => {
   });
 
   watch(
-    note,
-    () => {
-      if (!isDocChanged.value) {
-        isNoteSaved.value = false;
-      } else {
-        isDocChanged.value = false;
-      }
-    },
-    { deep: true }
+      note,
+      () => {
+        if (!isDocChanged.value) {
+          isNoteSaved.value = false;
+        } else {
+          isDocChanged.value = false;
+        }
+      },
+      {deep: true}
   );
 });
 
@@ -105,21 +106,26 @@ const decreaseFontSize = () => {
   display: flex;
   flex-direction: column;
 }
+
 form {
   display: flex;
   flex-direction: column;
   margin: 5px;
 }
+
 form > textarea {
   resize: none;
   flex-basis: 45svh;
 }
+
 .note-content > button {
   margin: 5px;
 }
+
 button:disabled {
   background-color: rgb(51, 50, 50);
 }
+
 .saved-status {
   font-weight: bold;
   color: brown;
@@ -141,7 +147,7 @@ button:disabled {
   font-size: 1.2rem;
 }
 
-.note-header{
+.note-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -153,8 +159,9 @@ button:disabled {
   margin-bottom: 10px;
 }
 
-.font-size-changer{
+.font-size-changer {
   display: flex;
+  gap: 5px;
   align-items: center;
   justify-content: center;
   border: 1px solid rgba(177, 177, 177, 0.5);
@@ -163,7 +170,7 @@ button:disabled {
   margin: 0px
 }
 
-.btn{
+.btn {
   margin: 0px
 }
 

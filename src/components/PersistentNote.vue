@@ -6,7 +6,8 @@
       <div class="note-header">
         <label>Forever note:</label>
         <div class="font-size-changer">
-        <button class="btn" @click="increaseFontSize">+</button><button class="btn" @click="decreaseFontSize">-</button>
+          <button class="btn" @click="increaseFontSize">+</button>
+          <button class="btn" @click="decreaseFontSize">-</button>
         </div>
       </div>
       <textarea v-model="note" :style="{ fontSize: fontSize + 'px' }"></textarea>
@@ -18,20 +19,20 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import {ref} from "vue";
 import userAuthState from "@/composables/userAuthState";
 import useDoc from "@/composables/useDoc";
-import { useRouter } from "vue-router";
-import { Timestamp } from "@firebase/firestore";
-import { watch } from "vue";
-import { onBeforeMount } from "vue";
+import {useRouter} from "vue-router";
+import {Timestamp} from "@firebase/firestore";
+import {watch} from "vue";
+import {onBeforeMount} from "vue";
 
 const note = ref("");
 const fontSize = ref(16);
 const isNoteSaved = ref(true);
 const isDocChanged = ref(false);
 const router = useRouter();
-const { user } = userAuthState();
+const {user} = userAuthState();
 const {
   getDocumentRealtime,
   setDocument,
@@ -56,11 +57,11 @@ const handleSubmit = async () => {
 
 const handleView = async () => {
   await handleSubmit();
-  router.push({ name: "viewer", state: { payload: note.value } });
+  router.push({name: "viewer", state: {payload: note.value}});
 };
 
 onBeforeMount(() => {
-  const { document: doc } = getDocumentRealtime(user.value.uid);
+  const {document: doc} = getDocumentRealtime(user.value.uid);
 
   watch(doc, () => {
     isDocChanged.value = true;
@@ -91,28 +92,33 @@ const decreaseFontSize = () => {
   grid-template-rows: 50px 1fr;
   height: 90svh;
 }
+
 form {
   display: flex;
   flex-direction: column;
   margin: 5px;
 }
+
 form > textarea {
   resize: none;
   flex-basis: 100%;
 }
+
 .note-content > button {
   margin: 5px;
 }
+
 button:disabled {
   background-color: rgb(51, 50, 50);
 }
+
 .saved-status {
   font-weight: bold;
   color: brown;
   text-align: center;
 }
 
-.note-header{
+.note-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -124,17 +130,18 @@ button:disabled {
   margin-bottom: 10px;
 }
 
-.font-size-changer{
+.font-size-changer {
   display: flex;
+  gap: 5px;
   align-items: center;
   justify-content: center;
- border: 1px solid rgba(177, 177, 177, 0.5);
+  border: 1px solid rgba(177, 177, 177, 0.5);
   border-radius: 8px;
   padding: 5px;
   margin: 0px
 }
 
-.btn{
+.btn {
   margin: 0px
 }
 </style>
