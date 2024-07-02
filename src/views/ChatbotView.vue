@@ -24,7 +24,7 @@ import "prismjs/plugins/copy-to-clipboard/prism-copy-to-clipboard.js"; // show c
 import "prismjs/plugins/show-language/prism-show-language.js"; // display the language of the code block
 
 const messages = ref([]);
-const { ask, error, isPending } = useNoteAgent();
+const { ask, error, isPending } = useNoteAgent(true);
 const { executeAction } = useAIActions();
 
 marked.use({
