@@ -1,12 +1,17 @@
 <template>
   <div class="note-content">
     <button @click="handleView">View in markdown</button>
-    <form @submit.prevent="handleSubmit">
+    <form @submit.prevent="">
       <h4 v-show="!isNoteSaved" class="saved-status">Unsaved note</h4>
-      <label class="note-label">Forever note:</label>
-      <textarea v-model="note"></textarea>
+      <div class="note-header">
+        <label>Forever note:</label>
+        <div class="font-size-changer">
+        <button class="btn" @click="increaseFontSize">+</button><button class="btn" @click="decreaseFontSize">-</button>
+        </div>
+      </div>
+      <textarea v-model="note" :style="{ fontSize: fontSize + 'px' }"></textarea>
       <div v-if="error">{{ error }}</div>
-      <button v-if="!isPending">Save</button>
+      <button v-if="!isPending" @click="handleSubmit">Save</button>
       <button v-else disabled>Saving...</button>
     </form>
   </div>
@@ -22,16 +27,14 @@ import { watch } from "vue";
 import { onBeforeMount } from "vue";
 
 const note = ref("");
+const fontSize = ref(16);
 const isNoteSaved = ref(true);
 const isDocChanged = ref(false);
 const router = useRouter();
 const { user } = userAuthState();
 const {
-  getDocument,
   getDocumentRealtime,
   setDocument,
-  deleteDocument,
-  updateDocument,
   error,
   isPending,
 } = useDoc("notes");
@@ -72,6 +75,13 @@ onBeforeMount(() => {
     }
   });
 });
+
+const increaseFontSize = () => {
+  fontSize.value++;
+}
+const decreaseFontSize = () => {
+  fontSize.value--;
+}
 </script>
 
 <style scoped>
@@ -101,12 +111,30 @@ button:disabled {
   color: brown;
   text-align: center;
 }
-.note-label {
+
+.note-header{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   border: 0px;
-  padding-bottom: 10px;
-  margin-bottom: 10px;
   border-bottom: 1px;
   border-color: rgb(222, 222, 220);
   border-style: dashed;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+.font-size-changer{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+ border: 1px solid rgba(177, 177, 177, 0.5);
+  border-radius: 8px;
+  padding: 5px;
+  margin: 0px
+}
+
+.btn{
+  margin: 0px
 }
 </style>

@@ -2,16 +2,21 @@
   <div class="note-content">
     <button @click="handleView">View in markdown</button>
     <AddUsers v-if="note" v-model="note.users"></AddUsers>
-    <form @submit.prevent="handleSubmit">
+    <form @submit.prevent="">
       <h4 v-show="!isNoteSaved" class="saved-status">Unsaved note</h4>
       <div class="title-container">
         <label class="title-label">Title:</label>
         <input class="title-label" v-model="note.title" required />
       </div>
-      <label class="note-label">Payload:</label>
-      <textarea v-model="note.payload"></textarea>
+      <div class="note-header">
+        <label>Payload:</label>
+        <div class="font-size-changer">
+          <button class="btn" @click="increaseFontSize">+</button><button class="btn" @click="decreaseFontSize">-</button>
+        </div>
+      </div>
+      <textarea v-model="note.payload" :style="{ fontSize: fontSize + 'px' }"></textarea>
       <div v-if="error">{{ error }}</div>
-      <button v-if="!isPending">Save</button>
+      <button v-if="!isPending" @click="handleSubmit">Save</button>
       <button v-else disabled>Saving...</button>
     </form>
   </div>
@@ -30,7 +35,7 @@ import AddUsers from "./AddUsers.vue";
 const props = defineProps(["noteId"]);
 
 const note = ref("");
-
+const fontSize = ref(16);
 const isNoteSaved = ref(true);
 const isDocChanged = ref(false);
 const router = useRouter();
@@ -86,6 +91,13 @@ onBeforeMount(() => {
     { deep: true }
   );
 });
+
+const increaseFontSize = () => {
+  fontSize.value++;
+}
+const decreaseFontSize = () => {
+  fontSize.value--;
+}
 </script>
 
 <style scoped>
@@ -129,13 +141,30 @@ button:disabled {
   font-size: 1.2rem;
 }
 
-.note-label {
+.note-header{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   border: 0px;
-  margin-top: 10px;
-  padding-bottom: 10px;
-  margin-bottom: 10px;
   border-bottom: 1px;
   border-color: rgb(222, 222, 220);
   border-style: dashed;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
 }
+
+.font-size-changer{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(177, 177, 177, 0.5);
+  border-radius: 8px;
+  padding: 5px;
+  margin: 0px
+}
+
+.btn{
+  margin: 0px
+}
+
 </style>
