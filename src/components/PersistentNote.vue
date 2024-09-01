@@ -15,7 +15,6 @@
           v-model="note"
           basic
           :dark="dark"
-          :lang="lang"
           :extensions="extensions"
           :style="{ fontSize: fontSize + 'px' }"
       />
@@ -35,17 +34,27 @@ import {Timestamp} from "@firebase/firestore";
 import {watch} from "vue";
 import {onBeforeMount} from "vue";
 import CodeMirror from 'vue-codemirror6';
-import {markdown as md} from '@codemirror/lang-markdown';
+import {markdownLanguage, markdown} from "@codemirror/lang-markdown";
 import {vim} from '@replit/codemirror-vim'
 import {EditorView, lineNumbers} from '@codemirror/view';
 import {EditorState} from '@codemirror/state';
-import {bespin} from 'thememirror';
+import {amy as selectedTheme} from 'thememirror';
+import {languages} from "@codemirror/language-data";
+import {bracketMatching, defaultHighlightStyle} from "@codemirror/language";
+import {syntaxHighlighting, HighlightStyle} from "@codemirror/language";
+import {tags} from "@lezer/highlight";
+import {javascript} from "@codemirror/lang-javascript";
 
 const note = ref("");
 const fontSize = ref(16);
 const isNoteSaved = ref(true);
 const isDocChanged = ref(false);
-const lang = md()
+
+const myHighlightStyle = HighlightStyle.define([
+  {tag: tags.heading1, fontSize: '1.6em', fontWeight: 'bold'},
+  {tag: tags.heading2, fontSize: '1.4em', fontWeight: 'bold'},
+  {tag: tags.heading3, fontSize: '1.2em', fontWeight: 'bold'},
+]);
 
 const extensions = [
   vim(),
@@ -56,6 +65,17 @@ const extensions = [
     }
   }),
   EditorView.lineWrapping,
+  markdown({
+    base: markdownLanguage,
+    codeLanguages: languages,
+    addKeymap: true,
+    extensions: [
+      javascript()
+    ]
+  }),
+  bracketMatching(),
+  syntaxHighlighting(defaultHighlightStyle),
+  syntaxHighlighting(myHighlightStyle),
 ]
 
 
@@ -176,5 +196,4 @@ button:disabled {
 .btn {
   margin: 0px
 }
-
 </style>
