@@ -10,7 +10,14 @@
           <button class="btn" @click="decreaseFontSize">-</button>
         </div>
       </div>
-      <textarea v-model="note" :style="{ fontSize: fontSize + 'px' }"></textarea>
+      <!--      <textarea v-model="note" :style="{ fontSize: fontSize + 'px' }"></textarea>-->
+      <code-mirror
+          v-model="note"
+          basic
+          :dark="dark"
+          :lang="lang"
+          :extensions="extensions"
+      />
       <div v-if="error">{{ error }}</div>
       <button v-if="!isPending" @click="handleSubmit">Save</button>
       <button v-else disabled>Saving...</button>
@@ -19,18 +26,31 @@
 </template>
 
 <script setup>
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import userAuthState from "@/composables/userAuthState";
 import useDoc from "@/composables/useDoc";
 import {useRouter} from "vue-router";
 import {Timestamp} from "@firebase/firestore";
 import {watch} from "vue";
 import {onBeforeMount} from "vue";
+import CodeMirror from 'vue-codemirror6';
+import {markdown as md} from '@codemirror/lang-markdown';
+import {vim} from '@replit/codemirror-vim'
+import {EditorView, lineNumbers} from '@codemirror/view';
+import {EditorState} from '@codemirror/state';
+import {bespin} from 'thememirror';
 
 const note = ref("");
 const fontSize = ref(16);
 const isNoteSaved = ref(true);
 const isDocChanged = ref(false);
+const lang = md()
+
+const extensions = [
+  bespin,
+  vim()
+]
+
 const router = useRouter();
 const {user} = userAuthState();
 const {
@@ -39,6 +59,10 @@ const {
   error,
   isPending,
 } = useDoc("notes");
+
+const dark = ref(
+    window.matchMedia('(prefers-color-scheme: dark)').matches
+);
 
 const handleSubmit = async () => {
   let savedNote = {
