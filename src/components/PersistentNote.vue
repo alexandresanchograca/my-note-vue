@@ -10,7 +10,14 @@
           <button class="btn" @click="decreaseFontSize">-</button>
         </div>
       </div>
-      <textarea v-model="note" :style="{ fontSize: fontSize + 'px' }"></textarea>
+      <!--      <textarea v-model="note" :style="{ fontSize: fontSize + 'px' }"></textarea>-->
+      <code-mirror
+          v-model="note"
+          basic
+          :dark="dark"
+          :extensions="extensions"
+          :style="{ fontSize: fontSize + 'px' }"
+      />
       <div v-if="error">{{ error }}</div>
       <button v-if="!isPending" @click="handleSubmit">Save</button>
       <button v-else disabled>Saving...</button>
@@ -19,18 +26,59 @@
 </template>
 
 <script setup>
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import userAuthState from "@/composables/userAuthState";
 import useDoc from "@/composables/useDoc";
 import {useRouter} from "vue-router";
 import {Timestamp} from "@firebase/firestore";
 import {watch} from "vue";
 import {onBeforeMount} from "vue";
+import CodeMirror from 'vue-codemirror6';
+import {markdownLanguage, markdown} from "@codemirror/lang-markdown";
+import {vim} from '@replit/codemirror-vim'
+import {EditorView, lineNumbers} from '@codemirror/view';
+import {EditorState} from '@codemirror/state';
+import {bespin as selectedTheme} from 'thememirror';
+import {languages} from "@codemirror/language-data";
+import {bracketMatching, defaultHighlightStyle} from "@codemirror/language";
+import {syntaxHighlighting, HighlightStyle} from "@codemirror/language";
+import {tags} from "@lezer/highlight";
+import {javascript} from "@codemirror/lang-javascript";
 
 const note = ref("");
 const fontSize = ref(16);
 const isNoteSaved = ref(true);
 const isDocChanged = ref(false);
+
+const myHighlightStyle = HighlightStyle.define([
+  {tag: tags.heading1, fontSize: '1.6em', fontWeight: 'bold'},
+  {tag: tags.heading2, fontSize: '1.4em', fontWeight: 'bold'},
+  {tag: tags.heading3, fontSize: '1.2em', fontWeight: 'bold'},
+]);
+
+const extensions = [
+  selectedTheme,
+  vim(),
+  lineNumbers({
+    formatNumber: (lineNo, state) => {
+      const currentLine = state.doc.lineAt(state.selection.main.head).number;
+      return Math.abs(lineNo - currentLine).toString();
+    }
+  }),
+  EditorView.lineWrapping,
+  markdown({
+    base: markdownLanguage,
+    codeLanguages: languages,
+    addKeymap: true,
+    extensions: [
+      javascript()
+    ]
+  }),
+  bracketMatching(),
+  syntaxHighlighting(myHighlightStyle),
+]
+
+
 const router = useRouter();
 const {user} = userAuthState();
 const {
@@ -39,6 +87,10 @@ const {
   error,
   isPending,
 } = useDoc("notes");
+
+const dark = ref(
+    window.matchMedia('(prefers-color-scheme: dark)').matches
+);
 
 const handleSubmit = async () => {
   let savedNote = {
@@ -144,4 +196,31 @@ button:disabled {
 .btn {
   margin: 0px
 }
+
+:deep(.cm-fenced-code) {
+  padding: 1em;
+  margin: .5em 0;
+  overflow: auto;
+  border-radius: .3em;
+}
+
+:deep(.ͼ1x){
+  background: var(--widget-colors);
+}
+:deep(.ͼ1x .cm-gutters){
+  background: #2d2d2d;
+}
+
+:deep(.cm-line) {
+  font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  font-size: 1em;
+  line-height: 1.5;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  tab-size: 4;
+  hyphens: none;
+}
+
 </style>
