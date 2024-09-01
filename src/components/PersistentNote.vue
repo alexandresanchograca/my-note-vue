@@ -38,7 +38,7 @@ import {markdownLanguage, markdown} from "@codemirror/lang-markdown";
 import {vim} from '@replit/codemirror-vim'
 import {EditorView, lineNumbers} from '@codemirror/view';
 import {EditorState} from '@codemirror/state';
-import {amy as selectedTheme} from 'thememirror';
+import {bespin as selectedTheme} from 'thememirror';
 import {languages} from "@codemirror/language-data";
 import {bracketMatching, defaultHighlightStyle} from "@codemirror/language";
 import {syntaxHighlighting, HighlightStyle} from "@codemirror/language";
@@ -57,6 +57,7 @@ const myHighlightStyle = HighlightStyle.define([
 ]);
 
 const extensions = [
+  selectedTheme,
   vim(),
   lineNumbers({
     formatNumber: (lineNo, state) => {
@@ -74,7 +75,6 @@ const extensions = [
     ]
   }),
   bracketMatching(),
-  syntaxHighlighting(defaultHighlightStyle),
   syntaxHighlighting(myHighlightStyle),
 ]
 
@@ -196,4 +196,31 @@ button:disabled {
 .btn {
   margin: 0px
 }
+
+:deep(.cm-fenced-code) {
+  padding: 1em;
+  margin: .5em 0;
+  overflow: auto;
+  border-radius: .3em;
+}
+
+:deep(.ͼ1x){
+  background: var(--widget-colors);
+}
+:deep(.ͼ1x .cm-gutters){
+  background: #2d2d2d;
+}
+
+:deep(.cm-line) {
+  font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  font-size: 1em;
+  line-height: 1.5;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  tab-size: 4;
+  hyphens: none;
+}
+
 </style>
