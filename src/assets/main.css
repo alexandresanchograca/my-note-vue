@@ -100,3 +100,31 @@ span.token {
   font-size: 14px;
   margin: 16px 0;
 }
+
+.cm-gutterElement{
+  color: #ccc
+}
+/* For the primary cursor */
+.cm-vim-cursor {
+  border-left: 2px solid white !important; /* Change 'white' to your desired color */
+}
+
+/* For the secondary cursor (appears in visual mode) */
+.cm-vim-cursor-secondary {
+  border-left: 2px solid gray !important; /* Change 'gray' to your desired color */
+}
+
+/* For the selected text in visual mode */
+.cm-selectionBackground {
+  background-color: rgba(255, 255, 255, 0.2) !important; /* Adjust color and opacity as needed */
+}
+
+/* For block cursor in normal mode */
+.cm-fat-cursor {
+  background-color: rgba(255, 255, 255, 0.5) !important; /* Adjust color and opacity as needed */
+  border-color: transparent !important;
+}
+
+.ͼ3 .cm-activeLine{
+  background-color: #0000003b;
+}

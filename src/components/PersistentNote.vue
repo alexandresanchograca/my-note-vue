@@ -17,6 +17,7 @@
           :dark="dark"
           :lang="lang"
           :extensions="extensions"
+          :style="{ fontSize: fontSize + 'px' }"
       />
       <div v-if="error">{{ error }}</div>
       <button v-if="!isPending" @click="handleSubmit">Save</button>
@@ -47,9 +48,16 @@ const isDocChanged = ref(false);
 const lang = md()
 
 const extensions = [
-  bespin,
-  vim()
+  vim(),
+  lineNumbers({
+    formatNumber: (lineNo, state) => {
+      const currentLine = state.doc.lineAt(state.selection.main.head).number;
+      return Math.abs(lineNo - currentLine).toString();
+    }
+  }),
+  EditorView.lineWrapping,
 ]
+
 
 const router = useRouter();
 const {user} = userAuthState();
@@ -168,4 +176,5 @@ button:disabled {
 .btn {
   margin: 0px
 }
+
 </style>

@@ -16,4 +16,5 @@ import Navbar from "@/components/Navbar.vue";
   justify-content: flex-start;
   align-items: stretch;
 }
+
 </style>
