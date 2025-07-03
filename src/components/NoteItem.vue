@@ -6,7 +6,7 @@
       <h4 v-show="!isNoteSaved" class="saved-status">Unsaved note</h4>
       <div class="title-container">
         <label class="title-label">Title:</label>
-        <input class="title-label" v-model="note.title" required/>
+        <input class="title-label" v-model="note.title" required />
       </div>
       <div class="note-header">
         <label>Payload:</label>
@@ -15,7 +15,17 @@
           <button class="btn" @click="decreaseFontSize">-</button>
         </div>
       </div>
-      <textarea v-model="note.payload" :style="{ fontSize: fontSize + 'px' }"></textarea>
+      <!-- <textarea
+        v-model="note.payload"
+        :style="{ fontSize: fontSize + 'px' }"
+      ></textarea> -->
+      <code-mirror
+        v-model="note.payload"
+        basic
+        :dark="dark"
+        :extensions="extensions"
+        :style="{ fontSize: fontSize + 'px' }"
+      />
       <div v-if="error">{{ error }}</div>
       <button v-if="!isPending" @click="handleSubmit">Save</button>
       <button v-else disabled>Saving...</button>
@@ -24,34 +34,73 @@
 </template>
 
 <script setup>
-import {ref} from "vue";
+import { ref } from "vue";
 import userAuthState from "@/composables/userAuthState";
 import useDoc from "@/composables/useDoc";
-import {useRouter} from "vue-router";
-import {Timestamp} from "@firebase/firestore";
-import {watch} from "vue";
-import {onBeforeMount} from "vue";
+import { useRouter } from "vue-router";
+import { Timestamp } from "@firebase/firestore";
+import { watch } from "vue";
+import { onBeforeMount } from "vue";
 import AddUsers from "./AddUsers.vue";
+import CodeMirror from "vue-codemirror6";
+import { markdownLanguage, markdown } from "@codemirror/lang-markdown";
+import { Vim, vim } from "@replit/codemirror-vim";
+import { EditorView, lineNumbers } from "@codemirror/view";
+import { EditorState } from "@codemirror/state";
+import { bespin as selectedTheme } from "thememirror";
+import { languages } from "@codemirror/language-data";
+import { bracketMatching, defaultHighlightStyle } from "@codemirror/language";
+import { syntaxHighlighting, HighlightStyle } from "@codemirror/language";
+import { tags } from "@lezer/highlight";
+import { javascript } from "@codemirror/lang-javascript";
 
 const props = defineProps(["noteId"]);
+
+const myHighlightStyle = HighlightStyle.define([
+  { tag: tags.heading1, fontSize: "1.6em", fontWeight: "bold" },
+  { tag: tags.heading2, fontSize: "1.4em", fontWeight: "bold" },
+  { tag: tags.heading3, fontSize: "1.2em", fontWeight: "bold" },
+]);
+
+const extensions = [
+  selectedTheme,
+  vim(),
+  lineNumbers({
+    formatNumber: (lineNo, state) => {
+      const currentLine = state.doc.lineAt(state.selection.main.head).number;
+      return Math.abs(lineNo - currentLine).toString();
+    },
+  }),
+  EditorView.lineWrapping,
+  markdown({
+    base: markdownLanguage,
+    codeLanguages: languages,
+    addKeymap: true,
+    extensions: [javascript()],
+  }),
+  bracketMatching(),
+  syntaxHighlighting(myHighlightStyle),
+];
+
+Vim.defineEx("write", "w", () => handleSubmit());
 
 const note = ref("");
 const fontSize = ref(16);
 const isNoteSaved = ref(true);
 const isDocChanged = ref(false);
 const router = useRouter();
-const {getDocumentRealtime, setDocument, deleteDocument, error, isPending} =
-    useDoc("shared-notes");
+const { getDocumentRealtime, setDocument, deleteDocument, error, isPending } =
+  useDoc("shared-notes");
 
 const handleSubmit = async () => {
   note.value.users = note.value.users
-      .filter((usr) => usr.length)
-      .reduce((acc, curr) => {
-        if (!acc.includes(curr)) {
-          acc.push(curr);
-        }
-        return acc;
-      }, []);
+    .filter((usr) => usr.length)
+    .reduce((acc, curr) => {
+      if (!acc.includes(curr)) {
+        acc.push(curr);
+      }
+      return acc;
+    }, []);
 
   let savedNote = {
     ...note.value,
@@ -69,11 +118,11 @@ const handleSubmit = async () => {
 
 const handleView = async () => {
   await handleSubmit();
-  router.push({name: "viewer", state: {payload: note.value.payload}});
+  router.push({ name: "viewer", state: { payload: note.value.payload } });
 };
 
 onBeforeMount(() => {
-  const {document: doc} = getDocumentRealtime(props.noteId);
+  const { document: doc } = getDocumentRealtime(props.noteId);
 
   watch(doc, () => {
     isDocChanged.value = true;
@@ -81,24 +130,24 @@ onBeforeMount(() => {
   });
 
   watch(
-      note,
-      () => {
-        if (!isDocChanged.value) {
-          isNoteSaved.value = false;
-        } else {
-          isDocChanged.value = false;
-        }
-      },
-      {deep: true}
+    note,
+    () => {
+      if (!isDocChanged.value) {
+        isNoteSaved.value = false;
+      } else {
+        isDocChanged.value = false;
+      }
+    },
+    { deep: true }
   );
 });
 
 const increaseFontSize = () => {
   fontSize.value++;
-}
+};
 const decreaseFontSize = () => {
   fontSize.value--;
-}
+};
 </script>
 
 <style scoped>
@@ -167,11 +216,36 @@ button:disabled {
   border: 1px solid rgba(177, 177, 177, 0.5);
   border-radius: 8px;
   padding: 5px;
-  margin: 0px
+  margin: 0px;
 }
 
 .btn {
-  margin: 0px
+  margin: 0px;
 }
 
+:deep(.cm-fenced-code) {
+  padding: 1em;
+  margin: 0.5em 0;
+  overflow: auto;
+  border-radius: 0.3em;
+}
+
+:deep(.ͼ1x) {
+  background: var(--widget-colors);
+}
+:deep(.ͼ1x .cm-gutters) {
+  background: #2d2d2d;
+}
+
+:deep(.cm-line) {
+  font-family: Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
+  font-size: 1em;
+  line-height: 1.5;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  tab-size: 4;
+  hyphens: none;
+}
 </style>
