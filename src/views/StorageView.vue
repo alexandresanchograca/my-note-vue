@@ -15,11 +15,9 @@
         <i class="fa-solid fa-trash"></i>
       </button>
       <h3>{{ item.name }}</h3>
-      <button class="download item-btn">
-        <a class="item-btn" :href="item.url" target="_blank">
-          <i class="fa-solid fa-download" style="min-width: 100px"></i>
-        </a>
-      </button>
+      <a class="downlaod item-btn" :href="item.url" target="_blank">
+        <i class="fa-solid fa-download"></i>
+      </a>
     </div>
   </div>
 </template>
@@ -100,6 +98,33 @@ h3 {
 .delete {
   margin: 20px 0px;
   background-color: rgba(150, 37, 0, 0.5);
+}
+
+a {
+  background: var(--secondary);
+  border-radius: 8px;
+  margin-top: 8px;
+  border: 0;
+  padding: 8px 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 100px;
+}
+
+a:hover,
+.btn:hover {
+  background: var(--primary);
+  color: var(--widget-colors);
+}
+
+a:disabled {
+  opacity: 0.5;
+  color: var(--primary);
+  background: var(--secondary);
+  cursor: not-allowed;
 }
 
 .loading-bar-wrapper {
