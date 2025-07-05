@@ -10,6 +10,7 @@ import MarkdownView from "@/views/MarkdownView.vue";
 import NoteView from "@/views/NoteView.vue";
 import SearchView from "@/views/SearchView.vue";
 import ChatbotView from "@/views/ChatbotView.vue";
+import StorageView from "@/views/StorageView.vue";
 
 function isAuthed(to, from, next) {
   if (auth.currentUser) {
@@ -72,6 +73,11 @@ const routes = [
     path: "/chatbot",
     name: "chatbot",
     component: ChatbotView,
+  },
+  {
+    path: "/storage",
+    name: "storage",
+    component: StorageView,
   },
 ];
 
