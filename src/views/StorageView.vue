@@ -1,5 +1,8 @@
 <template>
   <button @click="triggerFileInput">Upload new file</button>
+  <div v-if="isUploading" class="loading-bar-wrapper">
+    <div class="loading-bar" :style="{ width: uploadProgress + '%' }"></div>
+  </div>
   <input
     type="file"
     ref="fileInput"
@@ -27,6 +30,7 @@ import useUserStorage from "@/composables/useUserStorage.js";
 import { onBeforeMount } from "vue";
 
 const fileInput = ref(null);
+const isUploading = ref(false);
 
 const { storageDocs, uploadProgress, uploadFile, deleteFile, getAllDocsUrls } =
   useUserStorage();
@@ -40,12 +44,15 @@ function triggerFileInput() {
 }
 
 async function handleFileUpload(event) {
+  isUploading.value = true;
   const file = event.target.files[0];
   if (file) {
     try {
       await uploadFile(file);
     } catch (err) {
       console.error("[ERROR] Uploading file failed:", err);
+    } finally {
+      isUploading.value = false;
     }
   }
 }
@@ -93,5 +100,24 @@ h3 {
 .delete {
   margin: 20px 0px;
   background-color: rgba(150, 37, 0, 0.5);
+}
+
+.loading-bar-wrapper {
+  background: var(--widget);
+  border-radius: 8px;
+  height: 20px;
+  overflow: hidden;
+  position: relative;
+  margin: 16px 0 16px 0;
+}
+
+.loading-bar {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 8px;
+  width: 0%;
+  transition: width 0.3s ease-in-out;
+  position: relative;
+  overflow: hidden;
 }
 </style>
