@@ -1,38 +1,62 @@
 <template>
-  <button @click="handleUpload">Upload new file</button>
+  <button @click="triggerFileInput">Upload new file</button>
+  <input
+    type="file"
+    ref="fileInput"
+    style="display: none"
+    @change="handleFileUpload"
+  />
   <div class="storage-files">
-    <div v-for="item in storageItems" :key="item.id" class="storage-item">
-      <button class="delete item-btn" @click="handleDelete()">
+    <div v-for="item in storageDocs" :key="item.url" class="storage-item">
+      <button class="delete item-btn" @click="handleDelete(item.fullPath)">
         <i class="fa-solid fa-trash"></i>
       </button>
-      <h3>File name</h3>
-      <button class="download item-btn" @click="handleDownload()">
-        Download
+      <h3>{{ item.name }}</h3>
+      <button class="download item-btn">
+        <a class="item-btn" :href="item.url" target="_blank">
+          <i class="fa-solid fa-download" style="min-width: 100px"></i>
+        </a>
       </button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { ref } from "vue";
+import useUserStorage from "@/composables/useUserStorage.js";
+import { onBeforeMount } from "vue";
 
-const storageItems = ref([{ id: "kappa" }]);
+const fileInput = ref(null);
 
-function handleUpload() {
-  console.log("Uploading file...");
+const { storageDocs, uploadProgress, uploadFile, deleteFile, getAllDocsUrls } =
+  useUserStorage();
+
+onBeforeMount(async () => {
+  await getAllDocsUrls();
+});
+
+function triggerFileInput() {
+  fileInput.value.click();
 }
 
-function handleDownload() {
-  console.log("Downloading file...");
+async function handleFileUpload(event) {
+  const file = event.target.files[0];
+  if (file) {
+    try {
+      await uploadFile(file);
+    } catch (err) {
+      console.error("[ERROR] Uploading file failed:", err);
+    }
+  }
 }
 
-function handleDelete() {
-  console.log("Deleting file...");
+async function handleDelete(filePath) {
+  await deleteFile(filePath);
 }
 </script>
 
 <style scoped>
-.storage-files {
+.storage-item {
   margin: 1rem 0;
 }
 
