@@ -1,15 +1,16 @@
 <template>
   <div class="navbar">
     <nav>
-      <h1><router-link :to="{ name: 'home' }">My-Note</router-link></h1>
-      <div class="links">
+      <div v-if="user" class="links">
+        <router-link :to="{ name: 'home' }">Forever Note</router-link>
+        <router-link :to="{ name: 'daily' }">Daily Notes</router-link>
+        <router-link :to="{ name: 'shared' }">Note List</router-link>
+        <router-link :to="{ name: 'search' }">Search Notes</router-link>
+        <router-link :to="{ name: 'storage' }">Storage</router-link>
+        <router-link :to="{ name: 'chatbot' }">Help</router-link>
+      </div>
+      <div class="login-info">
         <div v-if="user">
-          <router-link :to="{ name: 'home' }">Forever Note</router-link>
-          <router-link :to="{ name: 'daily' }">Daily Notes</router-link>
-          <router-link :to="{ name: 'shared' }">Note List</router-link>
-          <router-link :to="{ name: 'search' }">Search Notes</router-link>
-          <router-link :to="{ name: 'storage' }">Storage</router-link>
-          <router-link :to="{ name: 'chatbot' }">Help</router-link>
           <span class="user-status">Logged in {{ user.email }}</span>
           <button @click="handleLogout">Logout</button>
         </div>
@@ -55,27 +56,31 @@ nav {
   align-items: center;
   margin: 0 auto;
 }
+
 nav h1 {
   margin-left: 20px;
   white-space: nowrap;
 }
-nav .links {
+
+nav .login-info {
   margin-left: auto;
 }
+
 nav .links a,
 button {
   margin-left: 16px;
   font-size: 14px;
 }
+
 nav img {
   max-height: 60px;
 }
+
 span {
   font-size: 14px;
   display: inline-block;
   margin-left: 16px;
   padding-left: 16px;
-  border-left: 1px solid #eee;
 }
 
 @media only screen and (max-width: 600px) {
