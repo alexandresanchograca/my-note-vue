@@ -2,7 +2,7 @@
   <div class="note-content">
     <button @click="handleView">View in markdown</button>
     <AddUsers v-if="note" v-model="note.users"></AddUsers>
-    <form @submit.prevent="">
+    <form ref="componentRef" @submit.prevent="">
       <h4 v-show="!isNoteSaved" class="saved-status">Unsaved note</h4>
       <div class="title-container">
         <label class="title-label">Title:</label>
@@ -15,17 +15,8 @@
           <button class="btn" @click="decreaseFontSize">-</button>
         </div>
       </div>
-      <!-- <textarea
-        v-model="note.payload"
-        :style="{ fontSize: fontSize + 'px' }"
-      ></textarea> -->
-      <code-mirror
-        v-model="note.payload"
-        basic
-        :dark="dark"
-        :extensions="extensions"
-        :style="{ fontSize: fontSize + 'px' }"
-      />
+      <code-mirror v-model="note.payload" basic :dark="dark" :extensions="extensions"
+        :style="{ fontSize: fontSize + 'px', flexGrow: '1', overflowY: 'scroll' }" />
       <div v-if="error">{{ error }}</div>
       <button v-if="!isPending" @click="handleSubmit">Save</button>
       <button v-else disabled>Saving...</button>
@@ -34,7 +25,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import userAuthState from "@/composables/userAuthState";
 import useDoc from "@/composables/useDoc";
 import { useRouter } from "vue-router";
@@ -53,6 +44,7 @@ import { bracketMatching, defaultHighlightStyle } from "@codemirror/language";
 import { syntaxHighlighting, HighlightStyle } from "@codemirror/language";
 import { tags } from "@lezer/highlight";
 import { javascript } from "@codemirror/lang-javascript";
+import useAvailableHeight from "@/composables/useAvailableHeight";
 
 const props = defineProps(["noteId"]);
 
@@ -91,6 +83,8 @@ const isDocChanged = ref(false);
 const router = useRouter();
 const { getDocumentRealtime, setDocument, deleteDocument, error, isPending } =
   useDoc("shared-notes");
+
+const { componentRef, componentHeight } = useAvailableHeight()
 
 const handleSubmit = async () => {
   note.value.users = note.value.users
@@ -160,14 +154,16 @@ form {
   display: flex;
   flex-direction: column;
   margin: 5px;
+  box-sizing: border-box;
+  height: calc(v-bind(componentHeight) - 16px);
 }
 
-form > textarea {
+form>textarea {
   resize: none;
   flex-basis: 45svh;
 }
 
-.note-content > button {
+.note-content>button {
   margin: 5px;
 }
 
@@ -223,6 +219,10 @@ button:disabled {
   margin: 0px;
 }
 
+:deep(.cm-editor) {
+  height: 100%;
+}
+
 :deep(.cm-fenced-code) {
   padding: 1em;
   margin: 0.5em 0;
@@ -233,6 +233,7 @@ button:disabled {
 :deep(.ͼ1x) {
   background: var(--widget-colors);
 }
+
 :deep(.ͼ1x .cm-gutters) {
   background: #2d2d2d;
 }
