@@ -3,21 +3,23 @@
   <div v-if="isUploading" class="loading-bar-wrapper">
     <div class="loading-bar" :style="{ width: uploadProgress + '%' }"></div>
   </div>
-  <input
-    type="file"
-    ref="fileInput"
-    style="display: none"
-    @change="handleFileUpload"
-  />
+  <input type="file" ref="fileInput" style="display: none" @change="handleFileUpload" />
   <div class="storage-files">
     <div v-for="item in storageDocs" :key="item.url" class="storage-item">
       <button class="delete item-btn" @click="handleDelete(item.fullPath)">
         <i class="fa-solid fa-trash"></i>
       </button>
       <h3>{{ item.name }}</h3>
-      <a class="downlaod item-btn" :href="item.url" target="_blank">
-        <i class="fa-solid fa-download"></i>
-      </a>
+      <div class="action-buttons">
+        <button class="copy item-btn" @click="copyLink(item.url)" :disabled="isCopying[item.url]" :aria-live="'polite'">
+          <i class="fa-solid fa-link" v-if="!copied[item.url]"></i>
+          <i class="fa-solid fa-check" v-else></i>
+          &nbsp;
+        </button>
+        <a class="downlaod item-btn" :href="item.url" target="_blank">
+          <i class="fa-solid fa-download"></i>
+        </a>
+      </div>
     </div>
   </div>
 </template>
@@ -29,6 +31,8 @@ import { onBeforeMount } from "vue";
 
 const fileInput = ref(null);
 const isUploading = ref(false);
+const copied = ref({});
+const isCopying = ref({});
 
 const { storageDocs, uploadProgress, uploadFile, deleteFile, getAllDocsUrls } =
   useUserStorage();
@@ -57,6 +61,38 @@ async function handleFileUpload(event) {
 
 async function handleDelete(filePath) {
   await deleteFile(filePath);
+}
+
+async function copyLink(url) {
+  if (!url) return;
+  if (isCopying.value[url]) return;
+  isCopying.value = { ...isCopying.value, [url]: true };
+
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(url);
+    } else {
+      // Fallback (works in non-HTTPS or older browsers)
+      const ta = document.createElement("textarea");
+      ta.value = url;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "absolute";
+      ta.style.left = "-9999px";
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+    }
+
+    copied.value = { ...copied.value, [url]: true };
+    setTimeout(() => {
+      copied.value = { ...copied.value, [url]: false };
+    }, 1500);
+  } catch (e) {
+    console.error("[ERROR] Copy failed:", e);
+  } finally {
+    isCopying.value = { ...isCopying.value, [url]: false };
+  }
 }
 </script>
 
@@ -87,6 +123,7 @@ h3 {
 .item-btn {
   height: 80%;
   flex-shrink: 0;
+  box-sizing: content-box;
 }
 
 .view {
@@ -98,6 +135,14 @@ h3 {
 .delete {
   margin: 20px 0px;
   background-color: rgba(150, 37, 0, 0.5);
+}
+
+.action-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 100%;
 }
 
 a {
@@ -115,8 +160,9 @@ a {
 }
 
 a:hover,
+button:hover,
 .btn:hover {
-  background: var(--primary);
+  background: var(--widget-colors);
   color: var(--widget-colors);
 }
 
