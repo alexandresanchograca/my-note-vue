@@ -11,13 +11,8 @@
         </div>
       </div>
       <!--      <textarea v-model="note" :style="{ fontSize: fontSize + 'px' }"></textarea>-->
-      <code-mirror
-        v-model="note"
-        basic
-        :dark="dark"
-        :extensions="extensions"
-        :style="{ fontSize: fontSize + 'px' }"
-      />
+      <code-mirror v-model="note" basic :dark="dark" :extensions="extensions"
+        :style="{ fontSize: fontSize + 'px', height: '100%' }" />
       <div v-if="error">{{ error }}</div>
       <button v-if="!isPending" @click="handleSubmit">Save</button>
       <button v-else disabled>Saving...</button>
@@ -143,12 +138,12 @@ form {
   margin: 5px;
 }
 
-form > textarea {
+form>textarea {
   resize: none;
   flex-basis: 100%;
 }
 
-.note-content > button {
+.note-content>button {
   margin: 5px;
 }
 
@@ -196,9 +191,14 @@ button:disabled {
   border-radius: 0.3em;
 }
 
+:deep(.cm-editor) {
+  height: 100%;
+}
+
 :deep(.ͼ1x) {
   background: var(--widget-colors);
 }
+
 :deep(.ͼ1x .cm-gutters) {
   background: #2d2d2d;
 }
