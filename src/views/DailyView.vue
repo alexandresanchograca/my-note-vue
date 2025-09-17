@@ -45,6 +45,5 @@ const wasViewClicked = ref(false);
 }
 .note-col {
   flex-grow: 1;
-  height: 100%;
 }
 </style>

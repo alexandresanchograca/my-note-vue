@@ -1,11 +1,7 @@
 <template>
   <div class="note">
-    <button
-      v-if="isOwner(note)"
-      class="delete item-btn"
-      @click="handleDelete(note)"
-      :disabled="note.isPersistent"
-    >
+    <button v-if="isOwner(note)" class="delete item-btn" @click="handleDelete(note)"
+      :disabled="note.isPersistent || isPending">
       <i class="fa-solid fa-trash"></i>
     </button>
     <ul v-if="note.users">
@@ -27,24 +23,31 @@
 import { useRouter } from "vue-router";
 import userAuthState from "@/composables/userAuthState";
 import useDoc from "@/composables/useDoc";
+import { ref } from "vue";
 
 const props = defineProps(["note"]);
+const emit = defineEmits(['removed'])
 
 const { deleteDocument } = useDoc("shared-notes");
 const { deleteDocument: deleteDaily } = useDoc("notes", "daily");
 const { user } = userAuthState();
 const router = useRouter();
 
+const isPending = ref(false)
+
 const isOwner = (note) => {
   return note.isPersistent || note.isDaily || note.owner === user.value.email;
 };
 
 const handleDelete = async (note) => {
+  isPending.value = true
   if (note.isDaily) {
     await deleteDaily(user.value.uid, note.id);
   } else {
     await deleteDocument(note.id);
   }
+  isPending.value = false
+  emit('removed')
 };
 
 const handleView = (note) => {

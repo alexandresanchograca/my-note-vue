@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="">
+  <form ref="componentRef" @submit.prevent="">
     <h4 v-if="!isNoteSaved" class="saved-status">Unsaved note</h4>
     <div class="note-header">
       <label>Daily note:</label>
@@ -10,7 +10,7 @@
     </div>
     <!-- <textarea v-model="note" :style="{ fontSize: fontSize + 'px' }"></textarea> -->
     <code-mirror v-model="note" basic :dark="dark" :extensions="extensions"
-      :style="{ fontSize: fontSize + 'px', height: '100%', overflowY: 'scroll' }" />
+      :style="{ fontSize: fontSize + 'px', flexGrow: '1', overflowY: 'scroll' }" />
     <div v-if="error">{{ error }}</div>
     <button v-if="!isPending" @click="handleSubmit">Save</button>
     <button v-else disabled>Saving...</button>
@@ -34,8 +34,13 @@ import { bracketMatching, defaultHighlightStyle } from "@codemirror/language";
 import { syntaxHighlighting, HighlightStyle } from "@codemirror/language";
 import { tags } from "@lezer/highlight";
 import { javascript } from "@codemirror/lang-javascript";
+import useAvailableHeight from "@/composables/useAvailableHeight";
 
 const props = defineProps(["selectedDate", "wasViewClicked"]);
+
+const dark = ref(window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+const { componentRef, componentHeight } = useAvailableHeight()
 
 const myHighlightStyle = HighlightStyle.define([
   { tag: tags.heading1, fontSize: "1.6em", fontWeight: "bold" },
@@ -166,6 +171,7 @@ form {
   flex-direction: column;
   margin: 5px;
   min-width: 650px;
+  height: calc(v-bind(componentHeight) - 16px);
 }
 
 form>textarea {

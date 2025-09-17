@@ -80,6 +80,7 @@ const note = ref("");
 const fontSize = ref(16);
 const isNoteSaved = ref(true);
 const isDocChanged = ref(false);
+const dark = ref(window.matchMedia("(prefers-color-scheme: dark)").matches);
 const router = useRouter();
 const { getDocumentRealtime, setDocument, deleteDocument, error, isPending } =
   useDoc("shared-notes");
@@ -154,7 +155,6 @@ form {
   display: flex;
   flex-direction: column;
   margin: 5px;
-  box-sizing: border-box;
   height: calc(v-bind(componentHeight) - 16px);
 }
 

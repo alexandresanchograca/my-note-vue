@@ -1,7 +1,7 @@
 <template>
   <div class="note-content">
     <button @click="handleView">View in markdown</button>
-    <form @submit.prevent="">
+    <form ref="componentRef" @submit.prevent="">
       <h4 v-show="!isNoteSaved" class="saved-status">Unsaved note</h4>
       <div class="note-header">
         <label>Forever note:</label>
@@ -10,9 +10,8 @@
           <button class="btn" @click="decreaseFontSize">-</button>
         </div>
       </div>
-      <!--      <textarea v-model="note" :style="{ fontSize: fontSize + 'px' }"></textarea>-->
       <code-mirror v-model="note" basic :dark="dark" :extensions="extensions"
-        :style="{ fontSize: fontSize + 'px', height: '100%' }" />
+        :style="{ fontSize: fontSize + 'px', flexGrow: '1', overflowY: 'scroll' }" />
       <div v-if="error">{{ error }}</div>
       <button v-if="!isPending" @click="handleSubmit">Save</button>
       <button v-else disabled>Saving...</button>
@@ -39,11 +38,14 @@ import { bracketMatching, defaultHighlightStyle } from "@codemirror/language";
 import { syntaxHighlighting, HighlightStyle } from "@codemirror/language";
 import { tags } from "@lezer/highlight";
 import { javascript } from "@codemirror/lang-javascript";
+import useAvailableHeight from "@/composables/useAvailableHeight";
 
 const note = ref("");
 const fontSize = ref(16);
 const isNoteSaved = ref(true);
 const isDocChanged = ref(false);
+
+const { componentRef, componentHeight } = useAvailableHeight()
 
 const myHighlightStyle = HighlightStyle.define([
   { tag: tags.heading1, fontSize: "1.6em", fontWeight: "bold" },
@@ -129,13 +131,13 @@ const decreaseFontSize = () => {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 50px 1fr;
-  height: 90svh;
 }
 
 form {
   display: flex;
   flex-direction: column;
   margin: 5px;
+  height: calc(v-bind(componentHeight) - 16px);
 }
 
 form>textarea {
