@@ -9,13 +9,8 @@
       </div>
     </div>
     <!-- <textarea v-model="note" :style="{ fontSize: fontSize + 'px' }"></textarea> -->
-    <code-mirror
-      v-model="note"
-      basic
-      :dark="dark"
-      :extensions="extensions"
-      :style="{ fontSize: fontSize + 'px' }"
-    />
+    <code-mirror v-model="note" basic :dark="dark" :extensions="extensions"
+      :style="{ fontSize: fontSize + 'px', height: '100%', overflowY: 'scroll' }" />
     <div v-if="error">{{ error }}</div>
     <button v-if="!isPending" @click="handleSubmit">Save</button>
     <button v-else disabled>Saving...</button>
@@ -170,13 +165,14 @@ form {
   display: flex;
   flex-direction: column;
   margin: 5px;
+  min-width: 650px;
 }
 
-form > textarea {
+form>textarea {
   flex-basis: 70vh;
 }
 
-.note-content > button {
+.note-content>button {
   margin: 5px;
 }
 
@@ -217,6 +213,10 @@ button:disabled {
   margin: 0px;
 }
 
+:deep(.cm-editor) {
+  height: 100%;
+}
+
 :deep(.cm-fenced-code) {
   padding: 1em;
   margin: 0.5em 0;
@@ -227,6 +227,7 @@ button:disabled {
 :deep(.ͼ1x) {
   background: var(--widget-colors);
 }
+
 :deep(.ͼ1x .cm-gutters) {
   background: #2d2d2d;
 }

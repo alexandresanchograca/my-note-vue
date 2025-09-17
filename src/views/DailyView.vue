@@ -37,6 +37,7 @@ const wasViewClicked = ref(false);
   align-items: flex-start;
   justify-content: stretch;
   flex-wrap: wrap;
+  height: 60vh;
 }
 .calendar-col {
   margin: 5px;
@@ -44,5 +45,6 @@ const wasViewClicked = ref(false);
 }
 .note-col {
   flex-grow: 1;
+  height: 100%;
 }
 </style>
