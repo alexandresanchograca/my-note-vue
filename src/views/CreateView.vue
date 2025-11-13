@@ -7,7 +7,7 @@
         <input class="title-label" v-model="note.title" required />
       </div>
       <label class="note-label">Payload:</label>
-      <code-mirror v-model="note.payload" basic :dark="dark" :extensions="extensions"
+      <code-mirror @ready="focusEditor" v-model="note.payload" basic :dark="dark" :extensions="extensions"
         :style="{ fontSize: fontSize + 'px', flexGrow: '1', overflowY: 'scroll' }" />
       <div v-if="error">{{ error }}</div>
       <button v-if="!isPending">Create</button>
@@ -80,6 +80,8 @@ const note = ref({
 const sharedUsers = ref([]);
 
 const { addDocument, error, isPending } = useDoc("shared-notes");
+
+const focusEditor = ({ view }) => view.focus();
 
 const handleSubmit = async () => {
   note.value.users = sharedUsers.value

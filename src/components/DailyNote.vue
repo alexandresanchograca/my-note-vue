@@ -9,7 +9,7 @@
       </div>
     </div>
     <!-- <textarea v-model="note" :style="{ fontSize: fontSize + 'px' }"></textarea> -->
-    <code-mirror v-model="note" basic :dark="dark" :extensions="extensions"
+    <code-mirror @ready="focusEditor" v-model="note" basic :dark="dark" :extensions="extensions"
       :style="{ fontSize: fontSize + 'px', flexGrow: '1', overflowY: 'scroll' }" />
     <div v-if="error">{{ error }}</div>
     <button v-if="!isPending" @click="handleSubmit">Save</button>
@@ -104,6 +104,8 @@ const handleSubmit = async () => {
     isNoteSaved.value = true;
   }
 };
+
+const focusEditor = ({ view }) => view.focus();
 
 let unWatchDoc = null;
 const handleGetDoc = () => {

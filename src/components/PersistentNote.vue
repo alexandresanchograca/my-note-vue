@@ -10,7 +10,7 @@
           <button class="btn" @click="decreaseFontSize">-</button>
         </div>
       </div>
-      <code-mirror v-model="note" basic :dark="dark" :extensions="extensions"
+      <code-mirror @ready="focusEditor" v-model="note" basic :dark="dark" :extensions="extensions"
         :style="{ fontSize: fontSize + 'px', flexGrow: '1', overflowY: 'scroll' }" />
       <div v-if="error">{{ error }}</div>
       <button v-if="!isPending" @click="handleSubmit">Save</button>
@@ -100,6 +100,8 @@ const handleView = async () => {
   await handleSubmit();
   router.push({ name: "viewer", state: { payload: note.value } });
 };
+
+const focusEditor = ({ view }) => view.focus();
 
 onBeforeMount(() => {
   const { document: doc } = getDocumentRealtime(user.value.uid);
